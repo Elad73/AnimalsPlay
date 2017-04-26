@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="number_of_guesses_list">
+        <item>2</item>
+        <item>4</item>
+        <item>6</item>
+    </string-array>
+
+    <string-array name="type_of_animals">
+        <item>Wild animals</item>
+        <item>Tame animals</item>
+    </string-array>
+
+    <string-array name="type_of_animal_values">
+        <item>Wild</item>
+        <item>Tame</item>
+    </string-array>
+
+    <string-array name="colors">
+        <item>White</item>
+        <item>Black</item>
+        <item>Green</item>
+        <item>Red</item>
+        <item>Blue</item>
+        <item>Yellow</item>
+    </string-array>
+
+    <string-array name="fonts">
+        <item>EmilysCandy-Regular</item>
+        <item>BoyzRGrossNF</item>
+        <item>Chubby Dotty</item>
+        <item>Love Letters</item>
+    </string-array>
+
+    <string-array name="fonts_values">
+        <item>EmilysCandy-Regular.ttf</item>
+        <item>BoyzRGrossNF.ttf</item>
+        <item>Chubby Dotty.ttf</item>
+        <item>Love Letters.ttf</item>
+    </string-array>
+</resources>
