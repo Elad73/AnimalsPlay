@@ -17,6 +17,7 @@
         <item quantity="one">%1$d guess, and %2$.02f%% correct</item>
         <item quantity="other">%1$d number of guesses, and %2$.02f%% correct</item>
     </plurals>
+    <!--<string name="result_string_value">%1$d number of guesses, and %2$.02f%% correct</string>-->
     <string name="reset_animal_quiz">RESET THE ANIMAL QUIZ</string>
     <string name="wrong_answer_message">No</string>
     <string name="default_animal_type">Wild_Animals</string>
@@ -24,6 +25,7 @@
     <string name="setting_Changed_toast_message">New Changes were Applied</string>
     <string name="summary_dialog_title">Congratulations!!!</string>
     <string name="animal_image_content_desc">Animal Image</string>
+    <string name="sammary_result_dialog_title">AnimalPlay Results</string>
 
 </resources>
 

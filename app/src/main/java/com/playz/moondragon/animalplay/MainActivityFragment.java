@@ -95,12 +95,11 @@ public class MainActivityFragment extends Fragment {
         public void onClick(View view) {
             Button btnGuess = ((Button) view);
             String guessValue = btnGuess.getText().toString();
-            String answerValue =  quizData.getCurrentRightAnswer().getName();
+            String answerValue =  quizData.getAnimalToGuessInCurrentTurn().getName();
             quizData.incrementRoundAttempts();
 
             if (guessValue.equals(answerValue)) {
-                //++numberOfRightAnswers;
-                quizData.incrementSuccessfullAttempts();
+                quizData.incrementSuccessfullAnswers();
                 txtAnswer.setText(answerValue + "!" + " RIGHT");
 
                 disableQuizButtons();
@@ -140,6 +139,7 @@ public class MainActivityFragment extends Fragment {
             Resources res = getResources();
             builder.setMessage(res.getQuantityString(R.plurals.result_string_value, numOfAllGuesses, numOfAllGuesses,
                     (1000/ (double) numOfAllGuesses)));
+            //builder.setMessage(getString(R.string.result_string_value, numOfAllGuesses, (1000/ (double) numOfAllGuesses)));
             builder.setPositiveButton(R.string.reset_animal_quiz, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -154,9 +154,9 @@ public class MainActivityFragment extends Fragment {
 
     private void displayStaticSummaryAndResetDialog() {
 
-        MyAlertDialogFragment animalQuizResults = MyAlertDialogFragment.newInstance(quizData.getNumberOfGuessesInRound());
+        MyAlertDialogFragment animalQuizResults = MyAlertDialogFragment.newInstance(quizData.get_numberOfAttemptsInRound());
         animalQuizResults.setCancelable(false);
-        animalQuizResults.show(getFragmentManager(), "AnimalQuizResults");
+        animalQuizResults.show(getFragmentManager(),getString(R.string.sammary_result_dialog_title));
     }
 
     private void displayNextQuestionAnimation() {
@@ -169,7 +169,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void disableQuizButtons() {
-        for (int row=0; row < quizData.getNumberOfGuessesRowsInRound(); row++) {
+        for (int row = 0; row < quizData.getNumberOfButtonRowsInRound(); row++) {
             LinearLayout guessRowLinearLayout = rowsOfGuessButtonsInAnimalQuiz[row];
 
             for (int buttonIndex=0; buttonIndex < guessRowLinearLayout.getChildCount(); buttonIndex++) {
@@ -250,9 +250,9 @@ public class MainActivityFragment extends Fragment {
             Log.e("AnimalQuiz", "There is an error Getting" + correctAnimal.getImagePath(), ioEx);
         }
 
-        List<String> currentWrongGuesses = quizData.getCurrentWrongGuesses();
+        List<String> currentWrongGuesses = quizData.getCurrentButtonsToGuess();
 
-        for (int row = 0; row < quizData.getNumberOfGuessesRowsInRound(); row++) {
+        for (int row = 0; row < quizData.getNumberOfButtonRowsInRound(); row++) {
             for (int column = 0 ; column < rowsOfGuessButtonsInAnimalQuiz[row].getChildCount(); column++) {
 
                 Button btnGuess = (Button) rowsOfGuessButtonsInAnimalQuiz[row].getChildAt(column);
@@ -263,7 +263,7 @@ public class MainActivityFragment extends Fragment {
             }
         }
 
-        int row = secureRandomNumber.nextInt(quizData.getNumberOfGuessesRowsInRound());
+        int row = secureRandomNumber.nextInt(quizData.getNumberOfButtonRowsInRound());
         int column = secureRandomNumber.nextInt(2);
         LinearLayout randomRow = rowsOfGuessButtonsInAnimalQuiz[row];
         ((Button) randomRow.getChildAt(column)).setText(correctAnimal.getName());
@@ -282,7 +282,7 @@ public class MainActivityFragment extends Fragment {
             horizontalLinearLayout.setVisibility(View.GONE);
         }
 
-        for (int row=0; row < quizData.getNumberOfGuessesRowsInRound(); row++) {
+        for (int row = 0; row < quizData.getNumberOfButtonRowsInRound(); row++) {
             rowsOfGuessButtonsInAnimalQuiz[row].setVisibility(View.VISIBLE);
         }
     }

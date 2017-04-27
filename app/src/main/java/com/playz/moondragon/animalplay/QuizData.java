@@ -19,18 +19,20 @@ public class QuizData {
 
     private final short NUMBER_OF_ANIMALS_INCLUDED_IN_QUIZ = 10;
 
-    HashMap<String, List<Animal>> _hmAllAnimals = null;
-    List<Animal> _lsAllAnimalsInRound;
-    List<Animal> _lsAnimalsToGuessInRound;
-    List<String>  _lsCurrentWrongGuesses;
-    Animal        _currentRightAnswer;
-    short         _numberOfGuessesInRound;
-    int           _numberOfGuessesRowsInRound;
-    //List<AnimalType> _lsAnimalTypesInRound;
-    short            _numberOfAttemptsInRound;
-    short            _defaultTextSize;
-    short _numberOfSuccessfulAnswers;
-    Set<String> _setAnimalTypesInRound = null;
+    private HashMap<String, List<Animal>> _hmAllAnimals = null;
+    private List<Animal> _lsAllAnimalsInRound;
+    private List<Animal> _lsAnimalsToGuessInRound;
+    private List<String> _lsCurrentButtonsToGuess;
+    private Animal _animalToGuessInCurrentTurn;
+    private short _numberOfButtonsInRound;
+    private int _numberOfButtonRowsInRound;
+
+
+
+    private short _numberOfAttemptsInRound;
+    private short _defaultTextSize;
+    private short _numberOfSuccessfulAnswers;
+    private Set<String> _setAnimalTypesInRound = null;
 
     public  QuizData() {
         _numberOfAttemptsInRound = 0;
@@ -39,15 +41,19 @@ public class QuizData {
         _hmAllAnimals = new HashMap<>();
         _lsAllAnimalsInRound = new ArrayList<>();
         _lsAnimalsToGuessInRound = new ArrayList<>();
-        _lsCurrentWrongGuesses = new ArrayList<>();
+        _lsCurrentButtonsToGuess = new ArrayList<>();
     }
 
-    public List<String> getCurrentWrongGuesses() {
-        return _lsCurrentWrongGuesses;
+    public List<String> getCurrentButtonsToGuess() {
+        return _lsCurrentButtonsToGuess;
     }
 
     public List<Animal> getAnimalsInRound() {
         return _lsAnimalsToGuessInRound;
+    }
+
+    public short get_numberOfAttemptsInRound() {
+        return _numberOfAttemptsInRound;
     }
 
     public short getDefaultTextSize() {
@@ -62,16 +68,16 @@ public class QuizData {
         return NUMBER_OF_ANIMALS_INCLUDED_IN_QUIZ;
     }
 
-    public Animal getCurrentRightAnswer() {
-        return _currentRightAnswer;
+    public Animal getAnimalToGuessInCurrentTurn() {
+        return _animalToGuessInCurrentTurn;
     }
 
-    public short getNumberOfGuessesInRound() {
-        return _numberOfGuessesInRound;
+    public short getNumberOfButtonsInRound() {
+        return _numberOfButtonsInRound;
     }
 
-    public int getNumberOfGuessesRowsInRound() {
-        return _numberOfGuessesRowsInRound;
+    public int getNumberOfButtonRowsInRound() {
+        return _numberOfButtonRowsInRound;
     }
 
     /**
@@ -150,8 +156,8 @@ public class QuizData {
     }
 
     public void loadNumberOfGuesses(short numberOfGuesses) {
-        _numberOfGuessesInRound = numberOfGuesses;
-        _numberOfGuessesRowsInRound = _numberOfGuessesInRound/2;
+        _numberOfButtonsInRound = numberOfGuesses;
+        _numberOfButtonRowsInRound = _numberOfButtonsInRound /2;
     }
 
     public void loadAnimalTypesInRound(Set<String> setAnimalTypes) {
@@ -169,21 +175,21 @@ public class QuizData {
         _numberOfAttemptsInRound++;
     }
 
-    public void incrementSuccessfullAttempts() {
+    public void incrementSuccessfullAnswers() {
         _numberOfSuccessfulAnswers++;
     }
 
     public Animal getNextAnimalInRound() {
-        _lsCurrentWrongGuesses.clear();
-        _currentRightAnswer = _lsAllAnimalsInRound.remove(0);
+        _lsCurrentButtonsToGuess.clear();
+        _animalToGuessInCurrentTurn = _lsAllAnimalsInRound.remove(0);
 
-        for(short i=0; i<getNumberOfGuessesInRound(); i++) {
-            _lsCurrentWrongGuesses.add(_lsAllAnimalsInRound.get(i).getName());
+        for(short i = 0; i< getNumberOfButtonsInRound(); i++) {
+            _lsCurrentButtonsToGuess.add(_lsAllAnimalsInRound.get(i).getName());
         }
 
-        _lsAllAnimalsInRound.add(_currentRightAnswer); //adding back the removed animal to the end of the list
+        _lsAllAnimalsInRound.add(_animalToGuessInCurrentTurn); //adding back the removed animal to the end of the list
 
-        return getCurrentRightAnswer();
+        return getAnimalToGuessInCurrentTurn();
     }
 
     public void prepareNewRound() {
@@ -209,6 +215,8 @@ public class QuizData {
             _lsAnimalsToGuessInRound.add(animal);
         }
         Collections.shuffle(_lsAnimalsToGuessInRound);
+        _numberOfAttemptsInRound = 0;
+        _numberOfSuccessfulAnswers = 0;
     }
 }
 
