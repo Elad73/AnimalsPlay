@@ -30,8 +30,6 @@ public class MainActivity extends AppCompatActivity {
 
     MainActivityFragment myAnimalQuizFragment;
 
-    //testing commit to github through android studio
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +47,12 @@ public class MainActivity extends AppCompatActivity {
 
         PreferenceManager.getDefaultSharedPreferences(MainActivity.this).registerOnSharedPreferenceChangeListener(settingsChangeListener);
 
+        QuizData.getInstance().initializePlay(getAssets());
+
         myAnimalQuizFragment = (MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.animalQuizFragment);
-
         myAnimalQuizFragment.initializeFragment(PreferenceManager.getDefaultSharedPreferences(MainActivity.this));
+
         isSettingsChanged = false;
-
-
     }
 
     @Override
@@ -83,15 +81,13 @@ public class MainActivity extends AppCompatActivity {
 
             switch (key) {
                 case GUESSES:
-                    myAnimalQuizFragment.loadRoundGuessRows(sharedPreferences);
-                    myAnimalQuizFragment.resetAnimalQuiz();
+                    myAnimalQuizFragment.resetRound();
                     break;
                 case ANIMALS_TYPES:
                     Set<String> animalTypes = sharedPreferences.getStringSet(ANIMALS_TYPES, null);
 
                     if (animalTypes != null && animalTypes.size() > 0) {
-                        myAnimalQuizFragment.modifyTypeOfAnimalsInQuiz(sharedPreferences);
-                        myAnimalQuizFragment.resetAnimalQuiz();
+                        myAnimalQuizFragment.resetRound();
                     }else {
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         animalTypes.add(getString(R.string.default_animal_type));
@@ -103,11 +99,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case QUIZ_FONT:
                     myAnimalQuizFragment.modifyQuizFont(sharedPreferences);
-                    myAnimalQuizFragment.resetAnimalQuiz();
                     break;
                 case QUIZ_BACKGROUND_COLOR:
                     myAnimalQuizFragment.modifyBackgroundColor(sharedPreferences);
-                    myAnimalQuizFragment.resetAnimalQuiz();
                     break;
             }
 

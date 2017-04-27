@@ -51,6 +51,7 @@ public class MainActivityFragment extends Fragment {
     private TextView     txtAnswer;
 
     private QuizData     quizData;
+    private SharedPreferences _sharedPreferences;
 
     public MainActivityFragment() {
     }
@@ -60,7 +61,8 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_main, container, false);
 
-        quizData = new QuizData();
+        //sp = SharedPreferences.  .getDefaultSharedPreferences(this);
+        quizData = QuizData.getInstance();
         secureRandomNumber   = new SecureRandom();
         handler              = new Handler();
 
@@ -99,7 +101,7 @@ public class MainActivityFragment extends Fragment {
             quizData.incrementRoundAttempts();
 
             if (guessValue.equals(answerValue)) {
-                quizData.incrementSuccessfullAnswers();
+                quizData.incrementSuccessfulAnswers();
                 txtAnswer.setText(answerValue + "!" + " RIGHT");
 
                 disableQuizButtons();
@@ -137,13 +139,13 @@ public class MainActivityFragment extends Fragment {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.summary_dialog_title);
             Resources res = getResources();
+
             builder.setMessage(res.getQuantityString(R.plurals.result_string_value, numOfAllGuesses, numOfAllGuesses,
                     (1000/ (double) numOfAllGuesses)));
-            //builder.setMessage(getString(R.string.result_string_value, numOfAllGuesses, (1000/ (double) numOfAllGuesses)));
             builder.setPositiveButton(R.string.reset_animal_quiz, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    ((MainActivityFragment) getFragmentManager().findFragmentById(R.id.animalQuizFragment)).resetAnimalQuiz();
+                    ((MainActivityFragment) getFragmentManager().findFragmentById(R.id.animalQuizFragment)).resetRound();
                 }
             });
 
@@ -154,7 +156,7 @@ public class MainActivityFragment extends Fragment {
 
     private void displayStaticSummaryAndResetDialog() {
 
-        MyAlertDialogFragment animalQuizResults = MyAlertDialogFragment.newInstance(quizData.get_numberOfAttemptsInRound());
+        MyAlertDialogFragment animalQuizResults = MyAlertDialogFragment.newInstance(quizData.getNumberOfAttemptsInRound());
         animalQuizResults.setCancelable(false);
         animalQuizResults.show(getFragmentManager(),getString(R.string.sammary_result_dialog_title));
     }
@@ -163,7 +165,7 @@ public class MainActivityFragment extends Fragment {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                animateAnimalQuiz(true);
+                animateTurn(true);
             }
         }, 1000); // 1000 milliseconds for 1 second delay
     }
@@ -178,7 +180,7 @@ public class MainActivityFragment extends Fragment {
         }
     }
 
-    private void animateAnimalQuiz(boolean animateOutAnimalImage) {
+    private void animateTurn(boolean animateOutScreen) {
         //incase we are showing the first image, there is no need for an animation
         if (quizData.getNumberOfSuccessfulAnswers() == 0) {
             return;
@@ -198,7 +200,7 @@ public class MainActivityFragment extends Fragment {
         //since "createCircularReveal" works from sdk 21 and up.
         //otherwise, there will not be an animation
         if (Build.VERSION.SDK_INT >= 21 ) {
-            if (animateOutAnimalImage) {
+            if (animateOutScreen) {
                 animator = ViewAnimationUtils.createCircularReveal(animalQuizLinearLayout, xBottomRight, yBottomRight, radius, 0);
 
                 animator.addListener(new Animator.AnimatorListener() {
@@ -209,7 +211,7 @@ public class MainActivityFragment extends Fragment {
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        showNextAnimal();
+                        showNextAnimalInTurn();
                     }
 
                     @Override
@@ -232,25 +234,33 @@ public class MainActivityFragment extends Fragment {
         }
     }
 
-    private void showNextAnimal() {
-        Animal correctAnimal = quizData.getNextAnimalInRound();
-        txtAnswer.setText("");
+    private void showNextAnimalInTurn() {
 
+        Animal animalToGuess = quizData.getNextAnimalInTurn();
+        setImageInTurn(animalToGuess);
+        setGuessButtonsInTurn(animalToGuess);
+        txtAnswer.setText("");
         txtQuestionNumber.setText(getString(R.string.question_text, (quizData.getNumberOfSuccessfulAnswers() + 1), quizData.getNumberOfAnimalsIncludedInRound()));
-        String animalType = correctAnimal.getType();
+    }
+
+    private void setImageInTurn(Animal animalToGuess) {
 
         AssetManager assets = getActivity().getAssets();
-        try (InputStream stream = assets.open(correctAnimal.getImagePath())) {
-            Drawable animalImage = Drawable.createFromStream(stream, correctAnimal.getType());
+        try (InputStream stream = assets.open(animalToGuess.getImagePath())) {
+            Drawable animalImage = Drawable.createFromStream(stream, animalToGuess.getType());
             imgAnimal.setImageDrawable(animalImage);
 
-            animateAnimalQuiz(false);
+            animateTurn(false);
 
         } catch (IOException ioEx) {
-            Log.e("AnimalQuiz", "There is an error Getting" + correctAnimal.getImagePath(), ioEx);
+            Log.e("AnimalQuiz", "There is an error Getting" + animalToGuess.getImagePath(), ioEx);
         }
+    }
 
-        List<String> currentWrongGuesses = quizData.getCurrentButtonsToGuess();
+    private void setGuessButtonsInTurn(Animal animalToGuess) {
+
+        //setting the text on the buttons in current turn
+        List<String> currentWrongGuesses = quizData.getButtonsToGuessInTurn();
 
         for (int row = 0; row < quizData.getNumberOfButtonRowsInRound(); row++) {
             for (int column = 0 ; column < rowsOfGuessButtonsInAnimalQuiz[row].getChildCount(); column++) {
@@ -263,20 +273,20 @@ public class MainActivityFragment extends Fragment {
             }
         }
 
+        //setting the text of the animal to guess in turn
         int row = secureRandomNumber.nextInt(quizData.getNumberOfButtonRowsInRound());
         int column = secureRandomNumber.nextInt(2);
         LinearLayout randomRow = rowsOfGuessButtonsInAnimalQuiz[row];
-        ((Button) randomRow.getChildAt(column)).setText(correctAnimal.getName());
+        ((Button) randomRow.getChildAt(column)).setText(animalToGuess.getName());
     }
 
-    public void resetAnimalQuiz() {
+    public void resetRound() {
 
-        quizData.prepareNewRound();
-        showNextAnimal();
+        quizData.initializeRound(_sharedPreferences);
+        showNextAnimalInTurn();
     }
 
     public void loadRoundGuessRows(SharedPreferences sharedPreferences) {
-        quizData.loadNumberOfGuesses(Short.parseShort(sharedPreferences.getString(MainActivity.GUESSES, null)));
 
         for (LinearLayout horizontalLinearLayout : rowsOfGuessButtonsInAnimalQuiz) {
             horizontalLinearLayout.setVisibility(View.GONE);
@@ -285,11 +295,6 @@ public class MainActivityFragment extends Fragment {
         for (int row = 0; row < quizData.getNumberOfButtonRowsInRound(); row++) {
             rowsOfGuessButtonsInAnimalQuiz[row].setVisibility(View.VISIBLE);
         }
-    }
-
-    public void modifyTypeOfAnimalsInQuiz(SharedPreferences sharedPreferences) {
-        //animalTypesInQuiz = sharedPreferences.getStringSet(MainActivity.ANIMALS_TYPES, null);
-        quizData.loadAnimalTypesInRound(sharedPreferences.getStringSet(MainActivity.ANIMALS_TYPES, null));
     }
 
     public void modifyQuizFont(SharedPreferences sharedPreferences) {
@@ -309,7 +314,7 @@ public class MainActivityFragment extends Fragment {
                 break;
             case "Love Letters.ttf":
                 modifiedFont = MainActivity.loveLetters;
-                fontSize = 36;
+                fontSize = 32;
                 break;
             case "EmilysCandy-Regular.ttf":
             default:
@@ -400,12 +405,13 @@ public class MainActivityFragment extends Fragment {
 
     public void initializeFragment(SharedPreferences sharedPreferences) {
 
+        _sharedPreferences = sharedPreferences;
         AssetManager assets = getActivity().getAssets();
 
-        quizData.initializeData(assets, sharedPreferences.getStringSet(MainActivity.ANIMALS_TYPES, null));
+        quizData.initializeRound(sharedPreferences);
         loadRoundGuessRows(sharedPreferences);
         modifyQuizFont(sharedPreferences);
         modifyBackgroundColor(sharedPreferences);
-        resetAnimalQuiz();
+        resetRound();
     }
 }

@@ -1,5 +1,6 @@
 package com.playz.moondragon.animalplay;
 
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.util.Log;
 
@@ -17,59 +18,58 @@ import java.util.Set;
 
 public class QuizData {
 
-    private final short NUMBER_OF_ANIMALS_INCLUDED_IN_QUIZ = 10;
+    private final short NUMBER_OF_ANIMALS_INCLUDED_IN_ROUND = 10;
+
+    private static QuizData _instance = null;
 
     private HashMap<String, List<Animal>> _hmAllAnimals = null;
-    private List<Animal> _lsAllAnimalsInRound;
-    private List<Animal> _lsAnimalsToGuessInRound;
-    private List<String> _lsCurrentButtonsToGuess;
-    private Animal _animalToGuessInCurrentTurn;
-    private short _numberOfButtonsInRound;
-    private int _numberOfButtonRowsInRound;
-
-
-
-    private short _numberOfAttemptsInRound;
-    private short _defaultTextSize;
-    private short _numberOfSuccessfulAnswers;
+    private List<Animal> _lsAllAnimalsInRound = null;
+    private List<Animal> _lsAnimalsToGuessInRound = null;
+    private List<String> _lsCurrentButtonsToGuess = null;
+    private Animal _animalToGuessInCurrentTurn = null;
     private Set<String> _setAnimalTypesInRound = null;
+    private short _numberOfButtonsInRound = 0;
+    private int _numberOfButtonRowsInRound = 0;
+    private short _numberOfAttemptsInRound = 0;
+    private short _numberOfSuccessfulAnswers = 0;
+    private short _defaultTextSize;
 
-    public  QuizData() {
-        _numberOfAttemptsInRound = 0;
-        _defaultTextSize = 24;
+    private  QuizData() {
 
         _hmAllAnimals = new HashMap<>();
         _lsAllAnimalsInRound = new ArrayList<>();
         _lsAnimalsToGuessInRound = new ArrayList<>();
         _lsCurrentButtonsToGuess = new ArrayList<>();
+
+         _numberOfButtonsInRound = 2;
+         _numberOfButtonRowsInRound = _numberOfButtonsInRound/2;
+        _numberOfAttemptsInRound = 0;
+        _numberOfSuccessfulAnswers = 0;
+        _defaultTextSize = 24;
     }
 
-    public List<String> getCurrentButtonsToGuess() {
-        return _lsCurrentButtonsToGuess;
-    }
-
-    public List<Animal> getAnimalsInRound() {
-        return _lsAnimalsToGuessInRound;
-    }
-
-    public short get_numberOfAttemptsInRound() {
-        return _numberOfAttemptsInRound;
-    }
-
-    public short getDefaultTextSize() {
-        return _defaultTextSize;
-    }
-
-    public short getNumberOfSuccessfulAnswers() {
-        return _numberOfSuccessfulAnswers;
+    //region Getters
+    public static QuizData getInstance() {
+        if (_instance == null) {
+            _instance = new QuizData();
+        }
+        return _instance;
     }
 
     public short getNumberOfAnimalsIncludedInRound() {
-        return NUMBER_OF_ANIMALS_INCLUDED_IN_QUIZ;
+        return NUMBER_OF_ANIMALS_INCLUDED_IN_ROUND;
     }
 
-    public Animal getAnimalToGuessInCurrentTurn() {
-        return _animalToGuessInCurrentTurn;
+    public List<String> getButtonsToGuessInTurn() {
+        return _lsCurrentButtonsToGuess;
+    }
+
+    public List<Animal> getAnimalsToGuessInRound() { return _lsAnimalsToGuessInRound; }
+
+    public Animal getAnimalToGuessInCurrentTurn() { return _animalToGuessInCurrentTurn; }
+
+    public Set<String> getAnimalTypesInRound() {
+        return _setAnimalTypesInRound;
     }
 
     public short getNumberOfButtonsInRound() {
@@ -80,8 +80,30 @@ public class QuizData {
         return _numberOfButtonRowsInRound;
     }
 
+    public short getNumberOfAttemptsInRound() { return _numberOfAttemptsInRound; }
+
+    public short getNumberOfSuccessfulAnswers() {
+        return _numberOfSuccessfulAnswers;
+    }
+
+    public short getDefaultTextSize() {
+        return _defaultTextSize;
+    }
+    //endregion
+
+
     /**
-     * Initializing the Hashmap of all Animals in the project.
+     * Initializing the Hashmap of all Animals in the play.
+     * Initializing the default animalstypes in the round.
+     * @param assets
+     */
+    public void initializePlay(AssetManager assets) {
+
+        loadAllAnimalsInPlay(assets);
+    }
+
+    /**
+     * Initializing the Hashmap of all Animals in the play.
      * Passing through the assets root, getting the animal assets folders and extracting the image files and mp3 files.
      * Instantiating the Animal object.
      * Creating the "Types" Lists and populating them with Animals.
@@ -89,9 +111,7 @@ public class QuizData {
      * After populating once, there is no need to do it again.
      * @param assets
      */
-    public void initializeData(AssetManager assets, Set<String> animalTypes ) {
-
-        loadAnimalTypesInRound(animalTypes);
+    private void loadAllAnimalsInPlay(AssetManager assets) {
 
         try {
             if (assets != null && _hmAllAnimals.size() == 0) {
@@ -100,48 +120,122 @@ public class QuizData {
                 for (String folder : allAssets) {
                     if (folder.indexOf("_Animals") > 0) {
                         String type = folder.substring(0, folder.indexOf('_'));//getting the "Tame" from "Tame_Animals-Sheep"
-                       //                          _setAnimalTypesInRound.add(type);
-                            List<Animal> lsAllAnimalsType;
-                            if (_hmAllAnimals.containsKey(type)) {
-                                lsAllAnimalsType = _hmAllAnimals.get(type);
+                        List<Animal> lsAllAnimalsType;
+                        if (_hmAllAnimals.containsKey(type)) {
+                            lsAllAnimalsType = _hmAllAnimals.get(type);
+                        }
+                        else {
+                            lsAllAnimalsType = new ArrayList<>();
+                            _hmAllAnimals.put(type, lsAllAnimalsType);
+                        }
+
+                        String[] allAssetsInType = assets.list(folder); //getting all of the assets in the folder
+                        for (String assetInType : allAssetsInType) {
+                            String assetType = assetInType.substring(assetInType.indexOf('.') + 1);
+                            String assetName = assetInType.substring(assetInType.indexOf('-') + 1, assetInType.indexOf('.')).replace('_', ' ');
+                            String assetsPath = folder + '/' + assetInType;
+                            Animal animal = isContainAnimalInList(lsAllAnimalsType, assetName);
+                            if (animal == null) {
+                                animal = new Animal(assetName, type);
+                                lsAllAnimalsType.add(animal);
+                                Log.d("QuizPlay", "QuizData/loadAllAnimalsInPlay: new animal added " + animal.getName());
                             }
-                            else {
-                                lsAllAnimalsType = new ArrayList<>();
-                                _hmAllAnimals.put(type, lsAllAnimalsType);
-                            }
 
-                            String[] allAssetsInType = assets.list(folder); //getting all of the assets in the folder
-                            for (String assetInType : allAssetsInType) {
-                                String assetType = assetInType.substring(assetInType.indexOf('.') + 1);
-                                String assetName = assetInType.substring(assetInType.indexOf('-') + 1, assetInType.indexOf('.')).replace('_', ' ');
-                                String assetsPath = folder + '/' + assetInType;
-                                Animal animal = isContainAnimalInAllAnimalsRound(lsAllAnimalsType, assetName);
-                                if (animal == null) {
-                                    animal = new Animal(assetName, type);
-                                    lsAllAnimalsType.add(animal);
-                                }
-
-                                switch (assetType) {
-                                    case "png":
-                                        animal.setImagePath(assetsPath);
-                                        break;
-                                    case "mp3":
-                                        animal.setSoundPath(assetsPath);
-                                        break;
-                                }
-
+                            switch (assetType) {
+                                case "png":
+                                    animal.setImagePath(assetsPath);
+                                    break;
+                                case "mp3":
+                                    animal.setSoundPath(assetsPath);
+                                    break;
                             }
                         }
                     }
                 }
-
-        }
-        catch (IOException ioEx) {
-            Log.e("QuizLog", "Inside QuizData:initializeData", ioEx);
+            }
+            Log.d("QuizPlay", "QuizData/loadAllAnimalsInPlay: _hmAllAnimals initialized with size " + _hmAllAnimals.size());
+        } catch (IOException ioEx) {
+            Log.e("QuizLog", "Inside QuizData:initializePlay", ioEx);
         }
     }
 
-    private Animal isContainAnimalInAllAnimalsRound(List<Animal> lsAnimals, String animalName) {
+    /**
+     * Do it once in a turn
+     * @param sharedPreferences
+     */
+    public void initializeRound(SharedPreferences sharedPreferences) {
+
+        loadAnimalTypesInRound(sharedPreferences.getStringSet(MainActivity.ANIMALS_TYPES, null));
+        loadNumberOfGuesses(Short.parseShort(sharedPreferences.getString(MainActivity.GUESSES, null)));
+
+        loadAllAnimalsInRound();
+        loadAnimalsToGuessInRound();
+    }
+
+    private void  loadAllAnimalsInRound() {
+
+        Log.d("QuizPlay", "QuizData/loadAllAnimalsInRound: Entering loadAllAnimalsInRound");
+        _lsAllAnimalsInRound.clear();
+
+        for (String type : _setAnimalTypesInRound) {
+            List<Animal> lsAnimalsType = _hmAllAnimals.get(type);
+            for (Animal animal : lsAnimalsType) {
+                _lsAllAnimalsInRound.add(animal);
+                Log.d("QuizPlay", "QuizData/loadAllAnimalsInRound: new animal path " + animal.getImagePath());
+            }
+        }
+        Collections.shuffle(_lsAllAnimalsInRound);
+        Log.d("QuizPlay", "QuizData/loadAllAnimalsInRound: _lsAllAnimalsInRound initialized with size " + _lsAllAnimalsInRound.size());
+    }
+
+
+    private void loadAnimalTypesInRound(Set<String> setAnimalTypes) {
+
+            _setAnimalTypesInRound = setAnimalTypes;
+    }
+
+    private void loadNumberOfGuesses(short numberOfGuesses) {
+        _numberOfButtonsInRound = numberOfGuesses;
+        _numberOfButtonRowsInRound = _numberOfButtonsInRound /2;
+    }
+
+
+
+    private void loadAnimalsToGuessInRound() {
+
+        _lsAnimalsToGuessInRound.clear();
+        SecureRandom secureRandomNumber = new SecureRandom();
+
+        for (short i = 0; i < NUMBER_OF_ANIMALS_INCLUDED_IN_ROUND; ) {
+            int randomIndex = secureRandomNumber.nextInt(_lsAllAnimalsInRound.size());
+            Animal animal = _lsAllAnimalsInRound.get(randomIndex);
+            if(isContainAnimalInList(_lsAnimalsToGuessInRound, animal.getName()) == null) {
+                _lsAnimalsToGuessInRound.add(animal);
+                Log.d("QuizPlay", "QuizData/loadAnimalsToGuessInRound: new animal path " + animal.getImagePath());
+                i++;
+            }
+        }
+        Collections.shuffle(_lsAnimalsToGuessInRound);
+        _numberOfAttemptsInRound = 0;
+        _numberOfSuccessfulAnswers = 0;
+        Log.d("QuizPlay", "QuizData/loadAnimalsToGuessInRound: _lsAnimalsToGuessInRound initialized with size " + _lsAnimalsToGuessInRound.size());
+    }
+
+    public Animal getNextAnimalInTurn() {
+
+        _lsCurrentButtonsToGuess.clear();
+        _animalToGuessInCurrentTurn = _lsAllAnimalsInRound.remove(0);
+
+        for(short i = 0; i< getNumberOfButtonsInRound(); i++) {
+            _lsCurrentButtonsToGuess.add(_lsAllAnimalsInRound.get(i).getName());
+        }
+
+        _lsAllAnimalsInRound.add(_animalToGuessInCurrentTurn); //adding back the removed animal to the end of the list
+
+        return getAnimalToGuessInCurrentTurn();
+    }
+
+    private Animal isContainAnimalInList(List<Animal> lsAnimals, String animalName) {
 
         Animal animal = null;
         if (lsAnimals.size() > 0) {
@@ -155,68 +249,12 @@ public class QuizData {
         return animal;
     }
 
-    public void loadNumberOfGuesses(short numberOfGuesses) {
-        _numberOfButtonsInRound = numberOfGuesses;
-        _numberOfButtonRowsInRound = _numberOfButtonsInRound /2;
-    }
-
-    public void loadAnimalTypesInRound(Set<String> setAnimalTypes) {
-        if (_setAnimalTypesInRound != null) {
-            _setAnimalTypesInRound.clear();
-        }
-        _setAnimalTypesInRound = setAnimalTypes;
-    }
-
-    public Set<String> getAnimalTypesInRound() {
-        return _setAnimalTypesInRound;
-    }
-
     public void incrementRoundAttempts() {
         _numberOfAttemptsInRound++;
     }
 
-    public void incrementSuccessfullAnswers() {
+    public void incrementSuccessfulAnswers() {
         _numberOfSuccessfulAnswers++;
-    }
-
-    public Animal getNextAnimalInRound() {
-        _lsCurrentButtonsToGuess.clear();
-        _animalToGuessInCurrentTurn = _lsAllAnimalsInRound.remove(0);
-
-        for(short i = 0; i< getNumberOfButtonsInRound(); i++) {
-            _lsCurrentButtonsToGuess.add(_lsAllAnimalsInRound.get(i).getName());
-        }
-
-        _lsAllAnimalsInRound.add(_animalToGuessInCurrentTurn); //adding back the removed animal to the end of the list
-
-        return getAnimalToGuessInCurrentTurn();
-    }
-
-    public void prepareNewRound() {
-
-        //populating _lsAllAnimalsInRound List
-        _lsAllAnimalsInRound.clear();
-
-        for (String type : _setAnimalTypesInRound) {
-            List<Animal> lsAnimalsType = _hmAllAnimals.get(type);
-            for (Animal animal : lsAnimalsType) {
-                _lsAllAnimalsInRound.add(animal);
-            }
-        }
-        Collections.shuffle(_lsAllAnimalsInRound);
-
-        //populating _lsAnimalsToGuessInRound List
-        _lsAnimalsToGuessInRound.clear();
-        SecureRandom secureRandomNumber = new SecureRandom();
-
-        for (short i=0; i < NUMBER_OF_ANIMALS_INCLUDED_IN_QUIZ; i++) {
-            int randomIndex = secureRandomNumber.nextInt(_lsAllAnimalsInRound.size());
-            Animal animal = _lsAllAnimalsInRound.get(randomIndex);
-            _lsAnimalsToGuessInRound.add(animal);
-        }
-        Collections.shuffle(_lsAnimalsToGuessInRound);
-        _numberOfAttemptsInRound = 0;
-        _numberOfSuccessfulAnswers = 0;
     }
 }
 
