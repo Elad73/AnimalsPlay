@@ -199,8 +199,6 @@ public class QuizData {
         _numberOfButtonRowsInRound = _numberOfButtonsInRound /2;
     }
 
-
-
     private void loadAnimalsToGuessInRound() {
 
         _lsAnimalsToGuessInRound.clear();

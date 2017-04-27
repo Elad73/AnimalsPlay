@@ -5,11 +5,14 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
@@ -29,6 +32,7 @@ import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.security.SecureRandom;
 import java.util.List;
 
@@ -241,6 +245,23 @@ public class MainActivityFragment extends Fragment {
         setGuessButtonsInTurn(animalToGuess);
         txtAnswer.setText("");
         txtQuestionNumber.setText(getString(R.string.question_text, (quizData.getNumberOfSuccessfulAnswers() + 1), quizData.getNumberOfAnimalsIncludedInRound()));
+        playAnimalToGuessSound(animalToGuess);
+    }
+
+    private void playAnimalToGuessSound(Animal animalToGuess) {
+
+        if(animalToGuess.getSoundPath() != null) {
+            MediaPlayer mp = new MediaPlayer();
+            try {
+                AssetFileDescriptor afd = getActivity().getAssets().openFd(animalToGuess.getSoundPath());
+                mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                afd.close();
+                mp.prepare();
+                mp.start();
+            } catch (IOException ioEX) {
+                Log.e("AnimalPlay", "MainActivityFragment/playAnimalToGuessSound", ioEX);
+            }
+        }
     }
 
     private void setImageInTurn(Animal animalToGuess) {
