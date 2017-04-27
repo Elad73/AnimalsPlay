@@ -12,7 +12,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
@@ -32,7 +31,6 @@ import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.security.SecureRandom;
 import java.util.List;
 
@@ -47,6 +45,8 @@ public class MainActivityFragment extends Fragment {
     private SecureRandom secureRandomNumber;
     private Handler      handler;
     private Animation    wrongAnswerAnimation;
+    private MediaPlayer  mediaPlayer;
+
 
     private LinearLayout animalQuizLinearLayout;
     private TextView     txtQuestionNumber;
@@ -65,10 +65,10 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_main, container, false);
 
-        //sp = SharedPreferences.  .getDefaultSharedPreferences(this);
         quizData = QuizData.getInstance();
         secureRandomNumber   = new SecureRandom();
         handler              = new Handler();
+        mediaPlayer          = new MediaPlayer();
 
         wrongAnswerAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.wrong_answer_animation);
         wrongAnswerAnimation.setRepeatCount(1);
@@ -146,7 +146,7 @@ public class MainActivityFragment extends Fragment {
 
             builder.setMessage(res.getQuantityString(R.plurals.result_string_value, numOfAllGuesses, numOfAllGuesses,
                     (1000/ (double) numOfAllGuesses)));
-            builder.setPositiveButton(R.string.reset_animal_quiz, new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(R.string.reset_animal_play, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     ((MainActivityFragment) getFragmentManager().findFragmentById(R.id.animalQuizFragment)).resetRound();

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AnimalQuiz</string>
+    <string name="app_name">AnimalPlay</string>
     <string name="action_settings">Settings</string>
     <string name="question_text">This is Animal %1$d of %2$d</string>
     <string name="number_of_guesses_title">Number of Guesses</string>
@@ -18,7 +18,7 @@
         <item quantity="other">%1$d number of guesses, and %2$.02f%% correct</item>
     </plurals>
     <!--<string name="result_string_value">%1$d number of guesses, and %2$.02f%% correct</string>-->
-    <string name="reset_animal_quiz">RESET THE ANIMAL QUIZ</string>
+    <string name="reset_animal_play">RESET THE ANIMAL PLAY</string>
     <string name="wrong_answer_message">No</string>
     <string name="default_animal_type">Wild_Animals</string>
     <string name="default_animalType_toast_message">One Type of Animals must be selected. The Default Value is Wild Animals</string>
