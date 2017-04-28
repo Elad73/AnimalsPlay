@@ -32,6 +32,7 @@ public class QuizData {
     private int _numberOfButtonRowsInRound = 0;
     private short _numberOfAttemptsInRound = 0;
     private short _numberOfSuccessfulAnswers = 0;
+    private short _imagesTypeToDisplayInTurn = 0;
     private short _defaultTextSize;
 
     private  QuizData() {
@@ -89,6 +90,10 @@ public class QuizData {
     public short getDefaultTextSize() {
         return _defaultTextSize;
     }
+
+    public short getTypeOfImageToDisplayInTurn() {
+        return _imagesTypeToDisplayInTurn;
+    }
     //endregion
 
 
@@ -132,7 +137,7 @@ public class QuizData {
                         String[] allAssetsInType = assets.list(folder); //getting all of the assets in the folder
                         for (String assetInType : allAssetsInType) {
                             String assetType = assetInType.substring(assetInType.indexOf('.') + 1);
-                            String assetName = assetInType.substring(assetInType.indexOf('-') + 1, assetInType.indexOf('.')).replace('_', ' ');
+                            String assetName = assetInType.substring(assetInType.indexOf('-') + 1, assetInType.indexOf('_'));
                             String assetsPath = folder + '/' + assetInType;
                             Animal animal = isContainAnimalInList(lsAllAnimalsType, assetName);
                             if (animal == null) {
@@ -143,9 +148,15 @@ public class QuizData {
 
                             switch (assetType) {
                                 case "png":
-                                    animal.setImagePath(assetsPath);
+                                case "jpg":
+                                    String index = assetInType.substring(assetInType.indexOf('_') + 1, assetInType.indexOf('.'));
+                                    if (index != "") {
+                                        Short imageIndex = Short.parseShort(index);
+                                        animal.setImagePath(assetsPath, imageIndex);
+                                    }
                                     break;
                                 case "mp3":
+                                case "wav":
                                     animal.setSoundPath(assetsPath);
                                     break;
                             }
@@ -167,6 +178,7 @@ public class QuizData {
 
         loadAnimalTypesInRound(sharedPreferences.getStringSet(MainActivity.ANIMALS_TYPES, null));
         loadNumberOfGuesses(Short.parseShort(sharedPreferences.getString(MainActivity.GUESSES, null)));
+        setTypeOfImagesToDisplayInTurn(Short.parseShort(sharedPreferences.getString(MainActivity.IMAGES_TYPES, null)));
 
         loadAllAnimalsInRound();
         loadAnimalsToGuessInRound();
@@ -181,13 +193,12 @@ public class QuizData {
             List<Animal> lsAnimalsType = _hmAllAnimals.get(type);
             for (Animal animal : lsAnimalsType) {
                 _lsAllAnimalsInRound.add(animal);
-                Log.d("QuizPlay", "QuizData/loadAllAnimalsInRound: new animal path " + animal.getImagePath());
+                Log.d("QuizPlay", "QuizData/loadAllAnimalsInRound: new animal path " + animal.getImagePath(_imagesTypeToDisplayInTurn));
             }
         }
         Collections.shuffle(_lsAllAnimalsInRound);
         Log.d("QuizPlay", "QuizData/loadAllAnimalsInRound: _lsAllAnimalsInRound initialized with size " + _lsAllAnimalsInRound.size());
     }
-
 
     private void loadAnimalTypesInRound(Set<String> setAnimalTypes) {
 
@@ -199,6 +210,8 @@ public class QuizData {
         _numberOfButtonRowsInRound = _numberOfButtonsInRound /2;
     }
 
+    public void setTypeOfImagesToDisplayInTurn(short imagesType) { _imagesTypeToDisplayInTurn = imagesType; }
+
     private void loadAnimalsToGuessInRound() {
 
         _lsAnimalsToGuessInRound.clear();
@@ -209,7 +222,7 @@ public class QuizData {
             Animal animal = _lsAllAnimalsInRound.get(randomIndex);
             if(isContainAnimalInList(_lsAnimalsToGuessInRound, animal.getName()) == null) {
                 _lsAnimalsToGuessInRound.add(animal);
-                Log.d("QuizPlay", "QuizData/loadAnimalsToGuessInRound: new animal path " + animal.getImagePath());
+                Log.d("QuizPlay", "QuizData/loadAnimalsToGuessInRound: new animal path " + animal.getImagePath(_imagesTypeToDisplayInTurn));
                 i++;
             }
         }
@@ -246,6 +259,8 @@ public class QuizData {
         }
         return animal;
     }
+
+
 
     public void incrementRoundAttempts() {
         _numberOfAttemptsInRound++;

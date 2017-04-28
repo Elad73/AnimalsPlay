@@ -7,13 +7,11 @@
     </string-array>
 
     <string-array name="type_of_animals">
-        <item>Wild animals</item>
-        <item>Tame animals</item>
+        <item>Invertebrates animals</item>
     </string-array>
 
     <string-array name="type_of_animal_values">
-        <item>Wild</item>
-        <item>Tame</item>
+        <item>Invertebrates</item>
     </string-array>
 
     <string-array name="colors">
@@ -38,4 +36,15 @@
         <item>Chubby Dotty.ttf</item>
         <item>Love Letters.ttf</item>
     </string-array>
+
+    <string-array name="type_of_images">
+        <item>Clip Art</item>
+        <item>Photo</item>
+    </string-array>
+
+    <string-array name="type_of_images_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
 </resources>

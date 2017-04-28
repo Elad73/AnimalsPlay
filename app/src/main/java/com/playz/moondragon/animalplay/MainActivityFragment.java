@@ -185,7 +185,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void animateTurn(boolean animateOutScreen) {
-        //incase we are showing the first image, there is no need for an animation
+      //incase we arshowing the first image, there is no need for an animation
         if (quizData.getNumberOfSuccessfulAnswers() == 0) {
             return;
         }
@@ -240,6 +240,7 @@ public class MainActivityFragment extends Fragment {
 
     private void showNextAnimalInTurn() {
 
+        mediaPlayer.reset();
         Animal animalToGuess = quizData.getNextAnimalInTurn();
         setImageInTurn(animalToGuess);
         setGuessButtonsInTurn(animalToGuess);
@@ -251,13 +252,13 @@ public class MainActivityFragment extends Fragment {
     private void playAnimalToGuessSound(Animal animalToGuess) {
 
         if(animalToGuess.getSoundPath() != null) {
-            MediaPlayer mp = new MediaPlayer();
             try {
+                Log.d("AnimalPlay", "MainActivityFragment/playAnimalToGuessSound: animal " + animalToGuess.getName() + ", Sound path: " + animalToGuess.getSoundPath());
                 AssetFileDescriptor afd = getActivity().getAssets().openFd(animalToGuess.getSoundPath());
-                mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
                 afd.close();
-                mp.prepare();
-                mp.start();
+                mediaPlayer.prepare();
+                mediaPlayer.start();
             } catch (IOException ioEX) {
                 Log.e("AnimalPlay", "MainActivityFragment/playAnimalToGuessSound", ioEX);
             }
@@ -267,14 +268,15 @@ public class MainActivityFragment extends Fragment {
     private void setImageInTurn(Animal animalToGuess) {
 
         AssetManager assets = getActivity().getAssets();
-        try (InputStream stream = assets.open(animalToGuess.getImagePath())) {
+        short imageTypeInTurn = quizData.getTypeOfImageToDisplayInTurn();
+        try (InputStream stream = assets.open(animalToGuess.getImagePath(imageTypeInTurn))) {
             Drawable animalImage = Drawable.createFromStream(stream, animalToGuess.getType());
             imgAnimal.setImageDrawable(animalImage);
 
             animateTurn(false);
 
         } catch (IOException ioEx) {
-            Log.e("AnimalQuiz", "There is an error Getting" + animalToGuess.getImagePath(), ioEx);
+            Log.e("AnimalQuiz", "There is an error Getting" + animalToGuess.getImagePath(imageTypeInTurn), ioEx);
         }
     }
 
@@ -421,6 +423,20 @@ public class MainActivityFragment extends Fragment {
 
         txtAnswer.setTextColor(modifiedAnswerTextColor);
         txtQuestionNumber.setTextColor(modifiedQuestionNumberTextColor);
+
+    }
+
+    public void modifyImagesTypeToDisplay(SharedPreferences sharedPreferences) {
+        String imagesTypeStringValue = sharedPreferences.getString(MainActivity.IMAGES_TYPES, null);
+        Short imagesType = 0;
+        try {
+            imagesType = Short.parseShort(imagesTypeStringValue);
+        }catch (NumberFormatException nfEx) {
+            imagesType = 0;
+        }
+        quizData.setTypeOfImagesToDisplayInTurn(imagesType);
+        Animal currentAnimalToGuess = quizData.getAnimalToGuessInCurrentTurn();
+        setImageInTurn(currentAnimalToGuess);
 
     }
 

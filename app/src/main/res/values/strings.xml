@@ -26,6 +26,11 @@
     <string name="summary_dialog_title">Congratulations!!!</string>
     <string name="animal_image_content_desc">Animal Image</string>
     <string name="sammary_result_dialog_title">AnimalPlay Results</string>
+    <string name="choose_image_type">Choose Image Type</string>
+    <string name="choose_image_type_description">Choose the type of image to display</string>
+    <string name="default_image_type">0</string>
+    <string name="reset_round">Reset Round</string>
+    <string name="reset_round_description">Enjoy a new Round!!</string>
 
 </resources>
 

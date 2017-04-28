@@ -8,7 +8,7 @@
         android:title="@string/number_of_guesses_title"
         android:summary="@string/number_of_guesses_description"
         android:persistent="true"
-        android:defaultValue="4">
+        android:defaultValue="2">
     </ListPreference>
 
     <MultiSelectListPreference
@@ -41,5 +41,20 @@
         android:defaultValue="@string/default_font">
     </ListPreference>
 
+    <ListPreference
+        android:entries="@array/type_of_images"
+        android:entryValues="@array/type_of_images_values"
+        android:key="settings_imagesType"
+        android:title="@string/choose_image_type"
+        android:summary="@string/choose_image_type_description"
+        android:persistent="true"
+        android:defaultValue="@string/default_image_type">
+    </ListPreference>
+
+    <ListPreference
+        android:key="settings_reset_round"
+        android:title="@string/reset_round"
+        android:summary="@string/reset_round_description">
+    </ListPreference>
 
 </PreferenceScreen>

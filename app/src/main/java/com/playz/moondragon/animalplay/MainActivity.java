@@ -20,6 +20,9 @@ public class MainActivity extends AppCompatActivity {
     public static final String ANIMALS_TYPES = "settings_animalsType";
     public static final String QUIZ_BACKGROUND_COLOR = "settings_quizBackgroundColor";
     public static final String QUIZ_FONT = "settings_quizFont";
+    public static final String IMAGES_TYPES = "settings_imagesType";
+    public static final String RESET_ROUND = "settings_reset_round";
+
 
     private boolean isSettingsChanged = false;
 
@@ -102,6 +105,12 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case QUIZ_BACKGROUND_COLOR:
                     myAnimalQuizFragment.modifyBackgroundColor(sharedPreferences);
+                    break;
+                case IMAGES_TYPES:
+                    myAnimalQuizFragment.modifyImagesTypeToDisplay(sharedPreferences);
+                    break;
+                case RESET_ROUND:
+                    myAnimalQuizFragment.resetRound();
                     break;
             }
 
