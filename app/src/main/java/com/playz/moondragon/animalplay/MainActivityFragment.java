@@ -41,6 +41,8 @@ import java.util.List;
 public class MainActivityFragment extends Fragment {
 
     private static final int NUMBER_OF_ANIMALS_INCLUDED_IN_QUIZ = 10;
+    private static final String FINISH_ROUND_SOUND = "sounds/Finish_Round_Sound.mp3";
+    private static final String RESET_ROUND_SOUND = "sounds/Reset_Round_Sound.mp3";
 
     private SecureRandom secureRandomNumber;
     private Handler      handler;
@@ -160,6 +162,7 @@ public class MainActivityFragment extends Fragment {
 
     private void displayStaticSummaryAndResetDialog() {
 
+        playFinishRoundSound();
         MyAlertDialogFragment animalQuizResults = MyAlertDialogFragment.newInstance(quizData.getNumberOfAttemptsInRound());
         animalQuizResults.setCancelable(false);
         animalQuizResults.show(getFragmentManager(),getString(R.string.sammary_result_dialog_title));
@@ -251,17 +254,34 @@ public class MainActivityFragment extends Fragment {
 
     private void playAnimalToGuessSound(Animal animalToGuess) {
 
-        if(animalToGuess.getSoundPath() != null) {
-            try {
-                Log.d("AnimalPlay", "MainActivityFragment/playAnimalToGuessSound: animal " + animalToGuess.getName() + ", Sound path: " + animalToGuess.getSoundPath());
-                AssetFileDescriptor afd = getActivity().getAssets().openFd(animalToGuess.getSoundPath());
-                mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-                afd.close();
-                mediaPlayer.prepare();
-                mediaPlayer.start();
-            } catch (IOException ioEX) {
-                Log.e("AnimalPlay", "MainActivityFragment/playAnimalToGuessSound", ioEX);
-            }
+        String soundPath = animalToGuess.getSoundPath();
+        if(soundPath != null) {
+            Log.d("AnimalPlay", "MainActivityFragment/playAnimalToGuessSound: animal " + animalToGuess.getName() + ", Sound path: " + soundPath);
+            playSound(soundPath);
+        }
+    }
+
+    private void playFinishRoundSound() {
+
+        playSound(FINISH_ROUND_SOUND);
+    }
+
+    private void playResetRoundSound() {
+
+        playSound(RESET_ROUND_SOUND);
+    }
+
+    private void playSound(String soundPath) {
+        mediaPlayer.reset();
+        try {
+            Log.d("AnimalPlay", "MainActivityFragment/playSound: soundPath " + soundPath);
+            AssetFileDescriptor afd = getActivity().getAssets().openFd(soundPath);
+            mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            afd.close();
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (IOException ioEX) {
+            Log.e("AnimalPlay", "MainActivityFragment/playAnimalToGuessSound", ioEX);
         }
     }
 
@@ -305,6 +325,7 @@ public class MainActivityFragment extends Fragment {
 
     public void resetRound() {
 
+        playResetRoundSound();
         quizData.initializeRound(_sharedPreferences);
         showNextAnimalInTurn();
     }
@@ -329,15 +350,15 @@ public class MainActivityFragment extends Fragment {
 
             case "BoyzRGrossNF.ttf":
                 modifiedFont = MainActivity.boyzRGrossNF;
-                fontSize = 34;
+                fontSize = 30;
                 break;
             case "Chubby Dotty.ttf":
                 modifiedFont = MainActivity.chubbyDotty;
-                fontSize = 30;
+                fontSize = 28;
                 break;
             case "Love Letters.ttf":
                 modifiedFont = MainActivity.loveLetters;
-                fontSize = 32;
+                fontSize = 30;
                 break;
             case "EmilysCandy-Regular.ttf":
             default:
