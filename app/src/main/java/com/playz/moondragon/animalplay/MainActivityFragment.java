@@ -41,8 +41,9 @@ import java.util.List;
 public class MainActivityFragment extends Fragment {
 
     private static final int NUMBER_OF_ANIMALS_INCLUDED_IN_QUIZ = 10;
-    private static final String FINISH_ROUND_SOUND = "sounds/Finish_Round_Sound.mp3";
-    private static final String RESET_ROUND_SOUND = "sounds/Reset_Round_Sound.mp3";
+    private static final String FINISH_ROUND_SOUND = "sounds/finish_round_sound.mp3";
+    private static final String RESET_ROUND_SOUND = "sounds/reset_round_sound.mp3";
+    private static final String WRONG_GUESS_SOUND = "sounds/wrong_guess.mp3";
 
     private SecureRandom secureRandomNumber;
     private Handler      handler;
@@ -119,6 +120,7 @@ public class MainActivityFragment extends Fragment {
                 }
 
             } else {
+                playWrongGuessSound();
                 imgAnimal.startAnimation(wrongAnswerAnimation);
 
                 txtAnswer.setText(R.string.wrong_answer_message);
@@ -243,7 +245,6 @@ public class MainActivityFragment extends Fragment {
 
     private void showNextAnimalInTurn() {
 
-        mediaPlayer.reset();
         Animal animalToGuess = quizData.getNextAnimalInTurn();
         setImageInTurn(animalToGuess);
         setGuessButtonsInTurn(animalToGuess);
@@ -270,6 +271,8 @@ public class MainActivityFragment extends Fragment {
 
         playSound(RESET_ROUND_SOUND);
     }
+
+    private void playWrongGuessSound() { playSound(WRONG_GUESS_SOUND);}
 
     private void playSound(String soundPath) {
         mediaPlayer.reset();
@@ -344,13 +347,13 @@ public class MainActivityFragment extends Fragment {
     public void modifyQuizFont(SharedPreferences sharedPreferences) {
         String fontStringValue = sharedPreferences.getString(MainActivity.QUIZ_FONT, null);
         Typeface modifiedFont;
-        float fontSize = 24;
+        float fontSize = 22;
 
         switch (fontStringValue) {
 
             case "BoyzRGrossNF.ttf":
                 modifiedFont = MainActivity.boyzRGrossNF;
-                fontSize = 30;
+                fontSize = 28;
                 break;
             case "Chubby Dotty.ttf":
                 modifiedFont = MainActivity.chubbyDotty;
@@ -363,7 +366,7 @@ public class MainActivityFragment extends Fragment {
             case "EmilysCandy-Regular.ttf":
             default:
                 modifiedFont = MainActivity.emilysCandyRegular;
-                fontSize = 24;
+                fontSize = 22;
                 break;
         }
 

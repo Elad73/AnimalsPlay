@@ -51,6 +51,7 @@
         android:defaultValue="@string/default_image_type">
     </ListPreference>
 
+<!--
     <Preference
         android:selectable="true"
         android:key="settings_reset_round"
@@ -58,5 +59,6 @@
         android:defaultValue="0"
         android:summary="@string/reset_round_description">
     </Preference>
+-->
 
 </PreferenceScreen>

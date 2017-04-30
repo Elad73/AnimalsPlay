@@ -8,10 +8,12 @@
 
     <string-array name="type_of_animals">
         <item>Invertebrates animals</item>
+        <item>Mammals animals</item>
     </string-array>
 
     <string-array name="type_of_animal_values">
         <item>Invertebrates</item>
+        <item>Mammals</item>
     </string-array>
 
     <string-array name="colors">
