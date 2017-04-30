@@ -41,9 +41,10 @@ import java.util.List;
 public class MainActivityFragment extends Fragment {
 
     private static final int NUMBER_OF_ANIMALS_INCLUDED_IN_QUIZ = 10;
-    private static final String FINISH_ROUND_SOUND = "sounds/finish_round_sound.mp3";
-    private static final String RESET_ROUND_SOUND = "sounds/reset_round_sound.mp3";
+    private static final String FINISH_ROUND_SOUND = "sounds/finish_round.mp3";
+    private static final String RESET_ROUND_SOUND = "sounds/reset_round.mp3";
     private static final String WRONG_GUESS_SOUND = "sounds/wrong_guess.mp3";
+    private static final String RIGHT_GUESS_SOUND = "sounds/right_guess.mp3";
 
     private SecureRandom secureRandomNumber;
     private Handler      handler;
@@ -79,6 +80,7 @@ public class MainActivityFragment extends Fragment {
         animalQuizLinearLayout            = (LinearLayout) view.findViewById(R.id.animalQuizLinearLayout);
         txtQuestionNumber                 = (TextView) view.findViewById(R.id.txtQuestionNumber);
         imgAnimal                         = (ImageView) view.findViewById(R.id.imgAnimal);
+        imgAnimal.setOnClickListener(imgAnimalClickListener);
         rowsOfGuessButtonsInAnimalQuiz    = new LinearLayout[3];
         rowsOfGuessButtonsInAnimalQuiz[0] = (LinearLayout) view.findViewById(R.id.rowLnrLayout1);
         rowsOfGuessButtonsInAnimalQuiz[1] = (LinearLayout) view.findViewById(R.id.rowLnrLayout2);
@@ -99,6 +101,16 @@ public class MainActivityFragment extends Fragment {
         return view;
     }
 
+    private View.OnClickListener imgAnimalClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            playSound(quizData.getAnimalToGuessInCurrentTurn().getSoundPath());
+
+        }
+    };
+
+
     private View.OnClickListener btnGuessListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -108,6 +120,7 @@ public class MainActivityFragment extends Fragment {
             quizData.incrementRoundAttempts();
 
             if (guessValue.equals(answerValue)) {
+                playRightGuessSound();
                 quizData.incrementSuccessfulAnswers();
                 txtAnswer.setText(answerValue + "!" + " RIGHT");
 
@@ -124,7 +137,6 @@ public class MainActivityFragment extends Fragment {
                 imgAnimal.startAnimation(wrongAnswerAnimation);
 
                 txtAnswer.setText(R.string.wrong_answer_message);
-                btnGuess.setEnabled(false);
             }
         }
     };
@@ -274,17 +286,21 @@ public class MainActivityFragment extends Fragment {
 
     private void playWrongGuessSound() { playSound(WRONG_GUESS_SOUND);}
 
+    private void playRightGuessSound() { playSound(RIGHT_GUESS_SOUND);}
+
     private void playSound(String soundPath) {
         mediaPlayer.reset();
-        try {
-            Log.d("AnimalPlay", "MainActivityFragment/playSound: soundPath " + soundPath);
-            AssetFileDescriptor afd = getActivity().getAssets().openFd(soundPath);
-            mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-            afd.close();
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-        } catch (IOException ioEX) {
-            Log.e("AnimalPlay", "MainActivityFragment/playAnimalToGuessSound", ioEX);
+        if(soundPath != null ) {
+            try {
+                Log.d("AnimalPlay", "MainActivityFragment/playSound: soundPath " + soundPath);
+                AssetFileDescriptor afd = getActivity().getAssets().openFd(soundPath);
+                mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                afd.close();
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+            } catch (IOException ioEX) {
+                Log.e("AnimalPlay", "MainActivityFragment/playAnimalToGuessSound", ioEX);
+            }
         }
     }
 
@@ -326,14 +342,29 @@ public class MainActivityFragment extends Fragment {
         ((Button) randomRow.getChildAt(column)).setText(animalToGuess.getName());
     }
 
+    public void resetRound(SharedPreferences sharedPreferences) {
+
+        _sharedPreferences = sharedPreferences;
+
+        resetRound();
+    }
+
     public void resetRound() {
 
         playResetRoundSound();
         quizData.initializeRound(_sharedPreferences);
+        try {
+            Thread.sleep(3000);
+        }
+        catch (InterruptedException iEx) {
+            Log.e("AnimalPlay" , "MainActivityFragment/resetRound", iEx);
+
+        }
+        loadRoundGuessRows();
         showNextAnimalInTurn();
     }
 
-    public void loadRoundGuessRows(SharedPreferences sharedPreferences) {
+    public void loadRoundGuessRows() {
 
         for (LinearLayout horizontalLinearLayout : rowsOfGuessButtonsInAnimalQuiz) {
             horizontalLinearLayout.setVisibility(View.GONE);
@@ -470,7 +501,7 @@ public class MainActivityFragment extends Fragment {
         AssetManager assets = getActivity().getAssets();
 
         quizData.initializeRound(sharedPreferences);
-        loadRoundGuessRows(sharedPreferences);
+        loadRoundGuessRows();
         modifyQuizFont(sharedPreferences);
         modifyBackgroundColor(sharedPreferences);
         resetRound();

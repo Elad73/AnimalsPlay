@@ -13,6 +13,27 @@
     android:orientation="vertical"
     android:background="#000">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/imgAnimal"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/margin_value"
+        android:layout_marginStart="@dimen/margin_start_value"
+        android:layout_marginEnd="@dimen/margin_end_value"
+        android:contentDescription="@string/animal_image_content_desc"
+        android:scaleType="fitCenter"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtAnswer"
+        android:layout_gravity="center_horizontal|bottom"
+        android:gravity="center_horizontal"
+        android:textStyle="italic"
+        android:textSize="@dimen/answer_font_size"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,7 +56,6 @@
 
     </LinearLayout>
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -57,7 +77,6 @@
             android:lines="2" />
 
     </LinearLayout>
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -91,25 +110,6 @@
         android:layout_marginBottom="@dimen/margin_value"
         android:textColor="#fff"/>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/imgAnimal"
-        android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/margin_value"
-        android:layout_marginStart="@dimen/margin_start_value"
-        android:layout_marginEnd="@dimen/margin_end_value"
-        android:contentDescription="@string/animal_image_content_desc"
-        android:scaleType="fitCenter"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/txtAnswer"
-        android:layout_gravity="center_horizontal|bottom"
-        android:gravity="center_horizontal"
-        android:textStyle="italic"
-        android:textSize="@dimen/answer_font_size"/>
 
 </LinearLayout>

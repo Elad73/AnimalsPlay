@@ -85,13 +85,13 @@ public class MainActivity extends AppCompatActivity {
 
             switch (key) {
                 case GUESSES:
-                    myAnimalQuizFragment.resetRound();
+                    myAnimalQuizFragment.resetRound(sharedPreferences);
                     break;
                 case ANIMALS_TYPES:
                     Set<String> animalTypes = sharedPreferences.getStringSet(ANIMALS_TYPES, null);
 
                     if (animalTypes != null && animalTypes.size() > 0) {
-                        myAnimalQuizFragment.resetRound();
+                        myAnimalQuizFragment.resetRound(sharedPreferences);
                     }else {
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         animalTypes.add(getString(R.string.default_animal_type));

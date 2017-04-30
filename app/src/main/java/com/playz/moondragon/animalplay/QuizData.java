@@ -180,6 +180,7 @@ public class QuizData {
         loadNumberOfGuesses(Short.parseShort(sharedPreferences.getString(MainActivity.GUESSES, null)));
         setTypeOfImagesToDisplayInTurn(Short.parseShort(sharedPreferences.getString(MainActivity.IMAGES_TYPES, null)));
 
+
         loadAllAnimalsInRound();
         loadAnimalsToGuessInRound();
     }
