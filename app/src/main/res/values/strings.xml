@@ -4,8 +4,9 @@
     <string name="question_text">This is Animal %1$d of %2$d</string>
     <string name="number_of_guesses_title">Number of Guesses</string>
     <string name="number_of_guesses_description">Show 2,4 or 6 guess options</string>
+    <string name="number_of_guesses_dialog_title">Choose number of guesses to Display</string>
     <string name="animal_types_title">Animals</string>
-    <string name="animal_types_description">Types of animals that you can include in the Quiz</string>
+    <string name="animal_types_description">Types of animals that you can include in the Play</string>
     <string name="choose_background_color">Choose background Color</string>
     <string name="choose_color_description">Choose one of these colors as the background Color</string>
     <string name="default_color_black">Black</string>
@@ -29,7 +30,7 @@
     <string name="choose_image_type">Choose Image Type</string>
     <string name="choose_image_type_description">Choose the type of image to display</string>
     <string name="default_image_type">0</string>
-    <string name="reset_round">Reset Round</string>
+    <string name="reset_round_title">Reset Round</string>
     <string name="reset_round_description">Enjoy a new Round!!</string>
 
 </resources>

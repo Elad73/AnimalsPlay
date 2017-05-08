@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.playz.moondragon.animalplay.SettingsActivityFragment"
-    tools:showIn="@layout/activity_settings">
+    tools:showIn="@layout/activity_settings"
+    android:id="@+id/settings_fragment">
 
 
 </android.support.constraint.ConstraintLayout>

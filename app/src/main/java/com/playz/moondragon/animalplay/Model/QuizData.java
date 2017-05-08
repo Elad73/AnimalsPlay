@@ -1,8 +1,10 @@
-package com.playz.moondragon.animalplay;
+package com.playz.moondragon.animalplay.Model;
 
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.util.Log;
+
+import com.playz.moondragon.animalplay.MainActivity;
 
 import java.io.IOException;
 import java.security.SecureRandom;
@@ -104,6 +106,7 @@ public class QuizData {
      */
     public void initializePlay(AssetManager assets) {
 
+        Log.d("AnimalPlay", "QuizData/initializePlay: Entering initializePlay");
         loadAllAnimalsInPlay(assets);
     }
 
@@ -118,6 +121,7 @@ public class QuizData {
      */
     private void loadAllAnimalsInPlay(AssetManager assets) {
 
+        Log.d("AnimalPlay", "QuizData/loadAllAnimalsInPlay: Entering loadAllAnimalsInPlay");
         try {
             if (assets != null && _hmAllAnimals.size() == 0) {
 
@@ -143,7 +147,7 @@ public class QuizData {
                             if (animal == null) {
                                 animal = new Animal(assetName, type);
                                 lsAllAnimalsType.add(animal);
-                                Log.d("QuizPlay", "QuizData/loadAllAnimalsInPlay: new animal added " + animal.getName());
+                                //Log.i("AnimalPlay", "QuizData/loadAllAnimalsInPlay: new animal added " + animal.getName());
                             }
 
                             switch (assetType) {
@@ -164,9 +168,9 @@ public class QuizData {
                     }
                 }
             }
-            Log.d("QuizPlay", "QuizData/loadAllAnimalsInPlay: _hmAllAnimals initialized with size " + _hmAllAnimals.size());
+            Log.d("AnimalPlay", "QuizData/loadAllAnimalsInPlay: _hmAllAnimals initialized with size " + _hmAllAnimals.size());
         } catch (IOException ioEx) {
-            Log.e("QuizLog", "Inside QuizData:initializePlay", ioEx);
+            Log.e("AnimalPlay", "Inside QuizData:initializePlay", ioEx);
         }
     }
 
@@ -176,6 +180,7 @@ public class QuizData {
      */
     public void initializeRound(SharedPreferences sharedPreferences) {
 
+        Log.d("AnimalPlay", "QuizData/initializeRound: Entering initializeRound");
         loadAnimalTypesInRound(sharedPreferences.getStringSet(MainActivity.ANIMALS_TYPES, null));
         loadNumberOfGuesses(Short.parseShort(sharedPreferences.getString(MainActivity.GUESSES, null)));
         setTypeOfImagesToDisplayInTurn(Short.parseShort(sharedPreferences.getString(MainActivity.IMAGES_TYPES, null)));
@@ -187,26 +192,28 @@ public class QuizData {
 
     private void  loadAllAnimalsInRound() {
 
-        Log.d("QuizPlay", "QuizData/loadAllAnimalsInRound: Entering loadAllAnimalsInRound");
+        Log.d("AnimalPlay", "QuizData/loadAllAnimalsInRound: Entering loadAllAnimalsInRound");
         _lsAllAnimalsInRound.clear();
 
         for (String type : _setAnimalTypesInRound) {
             List<Animal> lsAnimalsType = _hmAllAnimals.get(type);
             for (Animal animal : lsAnimalsType) {
                 _lsAllAnimalsInRound.add(animal);
-                Log.d("QuizPlay", "QuizData/loadAllAnimalsInRound: new animal path " + animal.getImagePath(_imagesTypeToDisplayInTurn));
+                Log.d("AnimalPlay", "QuizData/loadAllAnimalsInRound: new animal path " + animal.getImagePath(_imagesTypeToDisplayInTurn));
             }
         }
         Collections.shuffle(_lsAllAnimalsInRound);
-        Log.d("QuizPlay", "QuizData/loadAllAnimalsInRound: _lsAllAnimalsInRound initialized with size " + _lsAllAnimalsInRound.size());
+        Log.d("AnimalPlay", "QuizData/loadAllAnimalsInRound: _lsAllAnimalsInRound initialized with size " + _lsAllAnimalsInRound.size());
     }
 
     private void loadAnimalTypesInRound(Set<String> setAnimalTypes) {
 
-            _setAnimalTypesInRound = setAnimalTypes;
+        Log.d("AnimalPlay", "QuizData/loadAnimalTypesInRound: Entering loadAnimalTypesInRound");
+        _setAnimalTypesInRound = setAnimalTypes;
     }
 
     private void loadNumberOfGuesses(short numberOfGuesses) {
+        Log.d("AnimalPlay", "QuizData/loadNumberOfGuesses: Entering loadNumberOfGuesses");
         _numberOfButtonsInRound = numberOfGuesses;
         _numberOfButtonRowsInRound = _numberOfButtonsInRound /2;
     }
@@ -215,6 +222,7 @@ public class QuizData {
 
     private void loadAnimalsToGuessInRound() {
 
+        Log.d("AnimalPlay", "QuizData/loadAnimalsToGuessInRound: Entering loadAnimalsToGuessInRound");
         _lsAnimalsToGuessInRound.clear();
         SecureRandom secureRandomNumber = new SecureRandom();
 
@@ -223,14 +231,14 @@ public class QuizData {
             Animal animal = _lsAllAnimalsInRound.get(randomIndex);
             if(isContainAnimalInList(_lsAnimalsToGuessInRound, animal.getName()) == null) {
                 _lsAnimalsToGuessInRound.add(animal);
-                Log.d("QuizPlay", "QuizData/loadAnimalsToGuessInRound: new animal path " + animal.getImagePath(_imagesTypeToDisplayInTurn));
+                Log.d("AnimalPlay", "QuizData/loadAnimalsToGuessInRound: new animal path " + animal.getImagePath(_imagesTypeToDisplayInTurn));
                 i++;
             }
         }
         Collections.shuffle(_lsAnimalsToGuessInRound);
         _numberOfAttemptsInRound = 0;
         _numberOfSuccessfulAnswers = 0;
-        Log.d("QuizPlay", "QuizData/loadAnimalsToGuessInRound: _lsAnimalsToGuessInRound initialized with size " + _lsAnimalsToGuessInRound.size());
+        Log.d("AnimalPlay", "QuizData/loadAnimalsToGuessInRound: _lsAnimalsToGuessInRound initialized with size " + _lsAnimalsToGuessInRound.size());
     }
 
     public Animal getNextAnimalInTurn() {

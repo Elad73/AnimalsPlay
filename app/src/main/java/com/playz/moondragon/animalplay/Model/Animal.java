@@ -1,4 +1,4 @@
-package com.playz.moondragon.animalplay;
+package com.playz.moondragon.animalplay.Model;
 
 /**
  * Created by Elad on 24/04/2017.

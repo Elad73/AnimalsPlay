@@ -29,6 +29,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.playz.moondragon.animalplay.Model.Animal;
+import com.playz.moondragon.animalplay.Model.QuizData;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.SecureRandom;
@@ -58,7 +61,7 @@ public class MainActivityFragment extends Fragment {
     private LinearLayout[] rowsOfGuessButtonsInAnimalQuiz;
     private TextView     txtAnswer;
 
-    private QuizData     quizData;
+    private QuizData quizData;
     private SharedPreferences _sharedPreferences;
 
     public MainActivityFragment() {
@@ -67,6 +70,7 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d("AnimalPlay", "MainActivityFragment/onCreateView: entered onCreateView");
         View view =  inflater.inflate(R.layout.fragment_main, container, false);
 
         quizData = QuizData.getInstance();
@@ -112,6 +116,7 @@ public class MainActivityFragment extends Fragment {
 
 
     private View.OnClickListener btnGuessListener = new View.OnClickListener() {
+
         @Override
         public void onClick(View view) {
             Button btnGuess = ((Button) view);
@@ -145,7 +150,7 @@ public class MainActivityFragment extends Fragment {
     public static class MyAlertDialogFragment extends DialogFragment {
 
         public static MyAlertDialogFragment newInstance(int numOfAllGuesses) {
-
+            Log.d("AnimalPlay", "MyAlertDialogFragment/newInstance: entered newInstance");
             MyAlertDialogFragment frag = new MyAlertDialogFragment();
             Bundle args = new Bundle();
             args.putInt("NumOfAllGuesses", numOfAllGuesses);
@@ -175,7 +180,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void displayStaticSummaryAndResetDialog() {
-
+        Log.d("AnimalPlay", "MainActivityFragment/displayStaticSummaryAndResetDialog: entered displayStaticSummaryAndResetDialog");
         playFinishRoundSound();
         MyAlertDialogFragment animalQuizResults = MyAlertDialogFragment.newInstance(quizData.getNumberOfAttemptsInRound());
         animalQuizResults.setCancelable(false);
@@ -183,6 +188,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void displayNextQuestionAnimation() {
+        Log.d("AnimalPlay", "MainActivityFragment/displayNextQuestionAnimation: entered displayNextQuestionAnimation");
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -192,6 +198,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void disableQuizButtons() {
+        Log.d("AnimalPlay", "MainActivityFragment/disableQuizButtons: entered disableQuizButtons");
         for (int row = 0; row < quizData.getNumberOfButtonRowsInRound(); row++) {
             LinearLayout guessRowLinearLayout = rowsOfGuessButtonsInAnimalQuiz[row];
 
@@ -202,6 +209,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void animateTurn(boolean animateOutScreen) {
+        Log.d("AnimalPlay", "MainActivityFragment/animateTurn(boolean animateOutScreen): entered animateTurn(" + animateOutScreen + ")");
       //incase we arshowing the first image, there is no need for an animation
         if (quizData.getNumberOfSuccessfulAnswers() == 0) {
             return;
@@ -257,6 +265,7 @@ public class MainActivityFragment extends Fragment {
 
     private void showNextAnimalInTurn() {
 
+        Log.d("AnimalPlay", "MainActivityFragment/showNextAnimalInTurn: entered showNextAnimalInTurn");
         Animal animalToGuess = quizData.getNextAnimalInTurn();
         setImageInTurn(animalToGuess);
         setGuessButtonsInTurn(animalToGuess);
@@ -266,6 +275,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void playAnimalToGuessSound(Animal animalToGuess) {
+        Log.d("AnimalPlay", "MainActivityFragment/playAnimalToGuessSound(Animal animalToGuess): entered playAnimalToGuessSound(" + animalToGuess.getName() + ")");
 
         String soundPath = animalToGuess.getSoundPath();
         if(soundPath != null) {
@@ -275,20 +285,26 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void playFinishRoundSound() {
-
+        Log.d("AnimalPlay", "MainActivityFragment/playFinishRoundSound: entered playFinishRoundSound");
         playSound(FINISH_ROUND_SOUND);
     }
 
     private void playResetRoundSound() {
 
+        Log.d("AnimalPlay", "MainActivityFragment/playResetRoundSound: entered playResetRoundSound");
         playSound(RESET_ROUND_SOUND);
     }
 
-    private void playWrongGuessSound() { playSound(WRONG_GUESS_SOUND);}
+    private void playWrongGuessSound() {
+        Log.d("AnimalPlay", "MainActivityFragment/playWrongGuessSound: entered playWrongGuessSound");
+        playSound(WRONG_GUESS_SOUND);}
 
-    private void playRightGuessSound() { playSound(RIGHT_GUESS_SOUND);}
+    private void playRightGuessSound() {
+        Log.d("AnimalPlay", "MainActivityFragment/playRightGuessSound: entered playRightGuessSound");
+        playSound(RIGHT_GUESS_SOUND);}
 
     private void playSound(String soundPath) {
+        Log.d("AnimalPlay", "MainActivityFragment/playSound(String soundPath): entered playSound(" + soundPath + ")");
         mediaPlayer.reset();
         if(soundPath != null ) {
             try {
@@ -305,6 +321,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void setImageInTurn(Animal animalToGuess) {
+        Log.d("AnimalPlay", "MainActivityFragment/setImageInTurn: entered setImageInTurn");
 
         AssetManager assets = getActivity().getAssets();
         short imageTypeInTurn = quizData.getTypeOfImageToDisplayInTurn();
@@ -315,11 +332,12 @@ public class MainActivityFragment extends Fragment {
             animateTurn(false);
 
         } catch (IOException ioEx) {
-            Log.e("AnimalQuiz", "There is an error Getting" + animalToGuess.getImagePath(imageTypeInTurn), ioEx);
+            Log.e("AnimalPlay", "There is an error Getting" + animalToGuess.getImagePath(imageTypeInTurn), ioEx);
         }
     }
 
     private void setGuessButtonsInTurn(Animal animalToGuess) {
+        Log.d("AnimalPlay", "MainActivityFragment/setGuessButtonsInTurn: entered setGuessButtonsInTurn");
 
         //setting the text on the buttons in current turn
         List<String> currentWrongGuesses = quizData.getButtonsToGuessInTurn();
@@ -343,6 +361,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     public void resetRound(SharedPreferences sharedPreferences) {
+        Log.d("AnimalPlay", "MainActivityFragment/resetRound(SharedPreferences sharedPreferences): resetRound(SharedPreferences sharedPreferences)");
 
         _sharedPreferences = sharedPreferences;
 
@@ -350,6 +369,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     public void resetRound() {
+        Log.d("AnimalPlay", "MainActivityFragment/resetRound: entered resetRound");
 
         playResetRoundSound();
         quizData.initializeRound(_sharedPreferences);
@@ -365,6 +385,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     public void loadRoundGuessRows() {
+        Log.d("AnimalPlay", "MainActivityFragment/loadRoundGuessRows: entered loadRoundGuessRows");
 
         for (LinearLayout horizontalLinearLayout : rowsOfGuessButtonsInAnimalQuiz) {
             horizontalLinearLayout.setVisibility(View.GONE);
@@ -376,7 +397,8 @@ public class MainActivityFragment extends Fragment {
     }
 
     public void modifyQuizFont(SharedPreferences sharedPreferences) {
-        String fontStringValue = sharedPreferences.getString(MainActivity.QUIZ_FONT, null);
+        Log.d("AnimalPlay", "MainActivityFragment/modifyQuizFont: entered modifyQuizFont");
+        String fontStringValue = sharedPreferences.getString(MainActivity.PLAY_FONT, null);
         Typeface modifiedFont;
         float fontSize = 22;
 
@@ -411,7 +433,8 @@ public class MainActivityFragment extends Fragment {
     }
 
     public void modifyBackgroundColor(SharedPreferences sharedPreferences) {
-        String backgroundColor = sharedPreferences.getString(MainActivity.QUIZ_BACKGROUND_COLOR, null);
+        Log.d("AnimalPlay", "MainActivityFragment/modifyBackgroundColor: entered modifyBackgroundColor");
+        String backgroundColor = sharedPreferences.getString(MainActivity.PLAY_BACKGROUND_COLOR, null);
 
         int modifiedBackgroundColor;
         int modifieButtondBackgroundColor;
@@ -482,6 +505,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     public void modifyImagesTypeToDisplay(SharedPreferences sharedPreferences) {
+        Log.d("AnimalPlay", "MainActivityFragment/modifyImagesTypeToDisplay: entered modifyImagesTypeToDisplay");
         String imagesTypeStringValue = sharedPreferences.getString(MainActivity.IMAGES_TYPES, null);
         Short imagesType = 0;
         try {
@@ -496,6 +520,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     public void initializeFragment(SharedPreferences sharedPreferences) {
+        Log.d("AnimalPlay", "MainActivityFragment/initializeFragment: entered initializeFragment");
 
         _sharedPreferences = sharedPreferences;
         AssetManager assets = getActivity().getAssets();

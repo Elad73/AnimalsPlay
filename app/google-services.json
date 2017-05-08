@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1082317469166",
+    "firebase_url": "https://animalplay-8de10.firebaseio.com",
+    "project_id": "animalplay-8de10",
+    "storage_bucket": "animalplay-8de10.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1082317469166:android:e956e321addede21",
+        "android_client_info": {
+          "package_name": "com.playz.moondragon.animalplay"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1082317469166-hdc5k0t7v8qm2j1tekjb8ietvqevhr82.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.playz.moondragon.animalplay",
+            "certificate_hash": "de96fc31dc962099c42519ca77d528efda91fa02"
+          }
+        },
+        {
+          "client_id": "1082317469166-6um4e2ms55bfh6jq1dln0ctl95vprv0c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA986Q_E24v-ZnZ9tNNQl7oX_aeN8WpyOw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1082317469166-6um4e2ms55bfh6jq1dln0ctl95vprv0c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
