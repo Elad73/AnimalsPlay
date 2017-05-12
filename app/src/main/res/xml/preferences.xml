@@ -1,66 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-<!--
 
-    <ListPreference
-        android:entries="@array/number_of_guesses_list"
-        android:entryValues="@array/number_of_guesses_list"
-        android:key="NumberOfGuesses"
-        android:title="@string/number_of_guesses_title"
-        android:summary="@string/number_of_guesses_description"
-        android:persistent="true"
-        android:defaultValue="2">
-    </ListPreference>
+    <PreferenceCategory
+        android:title="Reset Round category">
+            <ListPreference
+                android:entries="@array/number_of_guesses_list"
+                android:entryValues="@array/number_of_guesses_list"
+                android:key="NumberOfGuesses"
+                android:title="@string/number_of_guesses_title"
+                android:summary="@string/number_of_guesses_description"
+                android:persistent="true"
+                android:defaultValue="2">
+            </ListPreference>
 
-    <MultiSelectListPreference
-        android:entries="@array/type_of_animals"
-        android:entryValues="@array/type_of_animal_values"
-        android:key="AnimalsType"
-        android:title="@string/animal_types_title"
-        android:summary="@string/animal_types_description"
-        android:persistent="true"
-        android:defaultValue="@array/type_of_animal_values">
-    </MultiSelectListPreference>
+            <MultiSelectListPreference
+                android:entries="@array/type_of_animals"
+                android:entryValues="@array/type_of_animal_values"
+                android:key="AnimalsType"
+                android:title="@string/animal_types_title"
+                android:summary="@string/animal_types_description"
+                android:persistent="true"
+                android:defaultValue="@array/type_of_animal_values">
+            </MultiSelectListPreference>
+            <!--
+            <Preference
+                android:selectable="true"
+                android:key="settings_reset_round"
+                android:title="@string/reset_round"
+                android:defaultValue="0"
+                android:summary="@string/reset_round_description">
+            </Preference>
+            -->
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Non-Reset category">
+        <ListPreference
+            android:entries="@array/colors"
+            android:entryValues="@array/colors"
+            android:key="PlayBackgroundColor"
+            android:title="@string/choose_background_color"
+            android:summary="@string/choose_color_description"
+            android:persistent="true"
+            android:defaultValue="@string/default_color_black">
+        </ListPreference>
 
-    <ListPreference
-        android:entries="@array/colors"
-        android:entryValues="@array/colors"
-        android:key="PlayBackgroundColor"
-        android:title="@string/choose_background_color"
-        android:summary="@string/choose_color_description"
-        android:persistent="true"
-        android:defaultValue="@string/default_color_black">
-    </ListPreference>
+        <ListPreference
+            android:entries="@array/fonts"
+            android:entryValues="@array/fonts_values"
+            android:key="PlayFont"
+            android:title="@string/choose_font"
+            android:summary="@string/choose_font_description"
+            android:persistent="true"
+            android:defaultValue="@string/default_font">
+        </ListPreference>
 
-    <ListPreference
-        android:entries="@array/fonts"
-        android:entryValues="@array/fonts_values"
-        android:key="PlayFont"
-        android:title="@string/choose_font"
-        android:summary="@string/choose_font_description"
-        android:persistent="true"
-        android:defaultValue="@string/default_font">
-    </ListPreference>
+        <ListPreference
+            android:entries="@array/type_of_images"
+            android:entryValues="@array/type_of_images_values"
+            android:key="ImagesType"
+            android:title="@string/choose_image_type"
+            android:summary="@string/choose_image_type_description"
+            android:persistent="true"
+            android:defaultValue="@string/default_image_type">
+        </ListPreference>
+    </PreferenceCategory>
 
-    <ListPreference
-        android:entries="@array/type_of_images"
-        android:entryValues="@array/type_of_images_values"
-        android:key="ImagesType"
-        android:title="@string/choose_image_type"
-        android:summary="@string/choose_image_type_description"
-        android:persistent="true"
-        android:defaultValue="@string/default_image_type">
-    </ListPreference>
--->
 
-<!--
-    <Preference
-        android:selectable="true"
-        android:key="settings_reset_round"
-        android:title="@string/reset_round"
-        android:defaultValue="0"
-        android:summary="@string/reset_round_description">
-    </Preference>
--->
 
 </PreferenceScreen>

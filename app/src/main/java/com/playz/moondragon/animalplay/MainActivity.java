@@ -6,7 +6,10 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.ListPreference;
+import android.preference.MultiSelectListPreference;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -24,17 +27,13 @@ import com.playz.moondragon.animalplay.Model.QuizData;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+
+import static java.lang.Boolean.TRUE;
 
 public class MainActivity extends AppCompatActivity {
 
-
-    /*public static final String GUESSES = "NumberOfGuesses";
-    public static final String ANIMALS_TYPES = "settings_animalsType";
-    public static final String PLAY_BACKGROUND_COLOR = "settings_quizBackgroundColor";
-    public static final String PLAY_FONT = "settings_quizFont";
-    public static final String IMAGES_TYPES = "settings_imagesType";
-    public static final String RESET_ROUND = "settings_reset_round";*/
 
     public static final String GUESSES = "NumberOfGuesses";
     public static final String ANIMALS_TYPES = "AnimalsType";
@@ -42,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String PLAY_FONT = "PlayFont";
     public static final String IMAGES_TYPES = "ImagesType";
     public static final String RESET_ROUND = "ResetRound";
-
 
     private boolean isSettingsChanged = false;
 
@@ -54,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     private MainActivityFragment myAnimalQuizFragment;
     private FirebaseDatabase fbDB;
     private DatabaseReference dbRef;
+
+    public static PreferenceScreen settings = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +71,11 @@ public class MainActivity extends AppCompatActivity {
         emilysCandyRegular = Typeface.createFromAsset(getAssets(), "fonts/EmilysCandy-Regular.ttf");
         loveLetters = Typeface.createFromAsset(getAssets(), "fonts/Love Letters.ttf");
 
-        //PreferenceManager.setDefaultValues(MainActivity.this, R.xml.preferences, false);
-        setSharedPreferencesDefaultValues();
+        //This is an attempt to load and build settings screen from database
+        //loadSettings();
+        //setSharedPreferencesDefaultValues();
+
+        PreferenceManager.setDefaultValues(MainActivity.this, R.xml.preferences, false);
         PreferenceManager.getDefaultSharedPreferences(MainActivity.this).registerOnSharedPreferenceChangeListener(settingsChangeListener);
 
         QuizData.getInstance().initializePlay(getAssets());
@@ -103,27 +106,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setSharedPreferencesDefaultValues() {
-        Log.d("AnimalPlay", "MainActivity/setSharedPreferencesDefaultValues: entered setSharedPreferencesDefaultValues");
-        SharedPreferences sharedPreference = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-
-        SharedPreferences.Editor editor = sharedPreference.edit();
-
-
-        editor.putString(GUESSES, "2");
-        Set<String> animalTypes = new HashSet<>();
-        for(CharSequence cs :  getResources().getTextArray(R.array.type_of_animal_values)) {
-            if (!animalTypes.add(cs.toString())) {
-                Log.e("AnimalPlay", "MainActivity/setSharedPreferencesDefaultValues: on animalTypes default value, found duplication -  " + cs.toString());
-            }
-        }
-        editor.putStringSet(ANIMALS_TYPES, animalTypes);
-
-        editor.putString(PLAY_BACKGROUND_COLOR, getResources().getString(R.string.default_color_black));
-        editor.putString(PLAY_FONT, getResources().getString(R.string.default_font));
-        editor.putString(IMAGES_TYPES, getResources().getString(R.string.default_image_type));
-        editor.apply();
-    }
 
     private SharedPreferences.OnSharedPreferenceChangeListener settingsChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 
@@ -141,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if (animalTypes != null && animalTypes.size() > 0) {
                         myAnimalQuizFragment.resetRound(sharedPreferences);
-                    }else {
+                    } else {
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         animalTypes.add(getString(R.string.default_animal_type));
                         editor.putStringSet(ANIMALS_TYPES, animalTypes);
@@ -165,49 +147,38 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void loadPreferences() {
 
-        Log.d("AnimalPlay", "MainActivity/loadPreferences: entered loadPreferences");
-        fbDB.getReference("Settings").child(GUESSES).addValueEventListener(new ValueEventListener() {
+
+   /* private void setSharedPreferencesDefaultValues() {
+        Log.d("AnimalPlay", "MainActivity/setSharedPreferencesDefaultValues: entered setSharedPreferencesDefaultValues");
+        SharedPreferences sharedPreference = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+
+        SharedPreferences.Editor editor = sharedPreference.edit();
+
+
+        editor.putString(GUESSES, "2");
+        Set<String> animalTypes = new HashSet<>();
+        for(CharSequence cs :  getResources().getTextArray(R.array.type_of_animal_values)) {
+            if (!animalTypes.add(cs.toString())) {
+                Log.e("AnimalPlay", "MainActivity/setSharedPreferencesDefaultValues: on animalTypes default value, found duplication -  " + cs.toString());
+            }
+        }
+        editor.putStringSet(ANIMALS_TYPES, animalTypes);
+
+        editor.putString(PLAY_BACKGROUND_COLOR, getResources().getString(R.string.default_color_black));
+        editor.putString(PLAY_FONT, getResources().getString(R.string.default_font));
+        editor.putString(IMAGES_TYPES, getResources().getString(R.string.default_image_type));
+        editor.apply();
+    }
+    private void loadSettings() {
+
+        Log.d("AnimalPlay", "MainActivity/loadSettings: entered loadSettings");
+        DatabaseReference settings = fbDB.getReference("Settings");
+        settings.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                SharedPreferences sPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sPref.edit();
-
-                Log.d("AnimalPlay", "MainActivity/loadPreferences: entered onDataChange");
-                //String defValue, entries, entryValues, Persistant, summary, title;
-                //Preference pref = new Preference(MainActivity.this);
-                PreferenceCategory prefCategory = new PreferenceCategory();
-                Log.d("AnimalPlay", "MainActivity/loadPreferences: dataSnapshot-" + dataSnapshot.getValue() );
-                 prefCategory = dataSnapshot.getValue(PreferenceCategory.class);
-                //pref.setDefaultValue(dataSnapshot.getValue(Preference.class));
-                Log.d("AnimalPlay", "MainActivity/loadPreferences: pref-" + prefCategory);
-                editor.putString(GUESSES, prefCategory.getTitle());
-                editor.putString(GUESSES, prefCategory.getSummary());
-                editor.putLong(GUESSES, prefCategory.getDefaultValue());
-                editor.putString(GUESSES, prefCategory.getEntries());
-                editor.putString(GUESSES, prefCategory.getEntryValues());
-                editor.putBoolean(GUESSES, prefCategory.getPersistent());
-                editor.apply();
-                //editor.commit();
-
-                Log.d("AnimalPlay", "MainActivity/loadPreferences: editor committed");
-
-
-                ListPreference lsPref = new ListPreference(MainActivity.this);
-                lsPref.setKey(GUESSES);
-                String[] entries = prefCategory.getEntries().split(",");
-                lsPref.setEntries( entries);
-                String[] entryValues = prefCategory.getEntryValues().split(",");
-                lsPref.setEntryValues(entryValues);
-                lsPref.setDefaultValue(prefCategory.getDefaultValue());
-                lsPref.setPersistent(prefCategory.getPersistent());
-                lsPref.setTitle(prefCategory.getTitle());
-                lsPref.setSummary(prefCategory.getSummary());
-
-                Log.d("AnimalPlay", "MainActivity/loadPreferences:  lsPref.getValue()-" +  lsPref.getValue());
-                //lsPref.getValue()
+                //Get all of the child elements of "Settings"
+                loadSettingsElements((Map<String, Object>) dataSnapshot.getValue());
 
             }
 
@@ -217,4 +188,89 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    private void loadSettingsElements(Map<String, Object> settings) {
+        Log.d("AnimalPlay", "MainActivity/loadSettingsElements(Map<String, Object> settingsElements: entered loadSettingsElements value-" + settings.toString());
+
+        for(Map.Entry<String,Object> childEntry : settings.entrySet()) {
+            Map child = (Map)childEntry.getValue();
+            Preference settingsElement = loadSettingsElement(child, MainActivity.this);
+            addElementToSettings(settingsElement);
+        }
+    }
+    private void firstAttempt() {
+        SharedPreferences sPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sPref.edit();
+
+        Log.d("AnimalPlay", "MainActivity/loadSettings: entered onDataChange");
+        //String defValue, entries, entryValues, Persistant, summary, title;
+        //Preference pref = new Preference(MainActivity.this);
+        PreferenceCategory prefCategory = new PreferenceCategory();
+        Log.d("AnimalPlay", "MainActivity/loadSettings: dataSnapshot-" + dataSnapshot.getValue() );
+        prefCategory = dataSnapshot.getValue(PreferenceCategory.class);
+        //pref.setDefaultValue(dataSnapshot.getValue(Preference.class));
+        Log.d("AnimalPlay", "MainActivity/loadSettings: pref-" + prefCategory);
+        editor.putString(GUESSES, prefCategory.getTitle());
+        editor.putString(GUESSES, prefCategory.getSummary());
+        editor.putLong(GUESSES, prefCategory.getDefaultValue());
+        editor.putString(GUESSES, prefCategory.getEntries());
+        editor.putString(GUESSES, prefCategory.getEntryValues());
+        editor.putBoolean(GUESSES, prefCategory.getPersistent());
+        editor.apply();
+        //editor.commit();
+
+        Log.d("AnimalPlay", "MainActivity/loadSettings: editor committed");
+
+
+        ListPreference lsPref = new ListPreference(MainActivity.this);
+        lsPref.setKey(GUESSES);
+        String[] entries = prefCategory.getEntries().split(",");
+        lsPref.setEntries( entries);
+        String[] entryValues = prefCategory.getEntryValues().split(",");
+        lsPref.setEntryValues(entryValues);
+        lsPref.setDefaultValue(prefCategory.getDefaultValue());
+        lsPref.setPersistent(prefCategory.getPersistent());
+        lsPref.setTitle(prefCategory.getTitle());
+        lsPref.setSummary(prefCategory.getSummary());
+
+        Log.d("AnimalPlay", "MainActivity/loadSettings:  lsPref.getValue()-" +  lsPref.getValue());
+        //lsPref.getValue()
+
+    }
+    private void addElementToSettings(Preference settingsElement) {
+        if (settings != null) {
+            SharedPreferences sPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sPref.edit();
+            editor.putLong(settingsElement.getKey(), settingsElement.getDefaultValue());
+
+
+        }
+    }
+    private Preference loadSettingsElement(Map child, Context context) {
+        Preference element = null;
+        String[] entries, entryValues;
+
+        switch( (String)child.get("elementType")) {
+            case "MultiSelectListPreference":
+                element = new MultiSelectListPreference(context);
+                entries = ((String)child.get("entries")).split(",");
+                ((MultiSelectListPreference)element).setEntries( entries);
+                entryValues = ((String)child.get("entryValues")).split(",");
+                ((MultiSelectListPreference)element).setEntryValues(entryValues);
+                break;
+            case "ListPreference":
+                element = new ListPreference(context);
+                entries = ((String)child.get("entries")).split(",");
+                ((ListPreference)element).setEntries( entries);
+                entryValues = ((String)child.get("entryValues")).split(",");
+                ((ListPreference)element).setEntryValues(entryValues);
+                break;
+        }
+
+        element.setPersistent(Boolean.parseBoolean((String)child.get("persistent")));
+        element.setTitle((String)child.get("title"));
+        element.setSummary((String)child.get("summary"));
+        element.setDefaultValue(child.get("defaultValue"));
+        return element;
+    }
+   */
 }

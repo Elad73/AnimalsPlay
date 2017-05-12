@@ -10,7 +10,7 @@
     <string name="choose_background_color">Choose background Color</string>
     <string name="choose_color_description">Choose one of these colors as the background Color</string>
     <string name="default_color_black">Black</string>
-    <string name="choose_font">Font for Quiz</string>
+    <string name="choose_font">Font for Play</string>
     <string name="choose_font_description">Choose one of these Fonts for Quiz</string>
     <string name="default_font">EmilysCandy-Regular.ttf</string>
     <string name="title_activity_settings">SettingsActivity</string>
@@ -21,8 +21,8 @@
     <!--<string name="result_string_value">%1$d number of guesses, and %2$.02f%% correct</string>-->
     <string name="reset_animal_play">RESET THE ANIMAL PLAY</string>
     <string name="wrong_answer_message">No</string>
-    <string name="default_animal_type">Wild_Animals</string>
-    <string name="default_animalType_toast_message">One Type of Animals must be selected. The Default Value is Wild Animals</string>
+    <string name="default_animal_type">Mammals</string>
+    <string name="default_animalType_toast_message">One Type of Animals must be selected. The Default Value is Mammals.</string>
     <string name="setting_Changed_toast_message">New Changes were Applied</string>
     <string name="summary_dialog_title">Congratulations!!!</string>
     <string name="animal_image_content_desc">Animal Image</string>

@@ -20,12 +20,12 @@ import java.util.Set;
  */
 public class SettingsActivityFragment extends PreferenceFragment {
 
-    public static final String GUESSES = "NumberOfGuesses";
+    /*public static final String GUESSES = "NumberOfGuesses";
     public static final String ANIMALS_TYPES = "AnimalsType";
     public static final String PLAY_BACKGROUND_COLOR = "PlayBackgroundColor";
     public static final String PLAY_FONT = "PlayFont";
     public static final String IMAGES_TYPES = "ImagesType";
-    public static final String RESET_ROUND = "ResetRound";
+    public static final String RESET_ROUND = "ResetRound";*/
 
     private MainActivityFragment myAnimalQuizFragment;
 
@@ -34,11 +34,12 @@ public class SettingsActivityFragment extends PreferenceFragment {
         Log.d("AnimalPlay", "SettingsActivityFragment/onCreate: entered onCreate");
         super.onCreate(savedInstanceState);
 
-        //addPreferencesFromResource(R.xml.preferences);
-        this.setPreferenceScreen(createPreferenceHierarchy());
+        addPreferencesFromResource(R.xml.preferences);
+        //this.setPreferenceScreen(createPreferenceHierarchy());
 
     }
 
+    /*
     public PreferenceScreen createPreferenceHierarchy() {
 
         PreferenceScreen root = getPreferenceManager().createPreferenceScreen(getActivity());
@@ -50,7 +51,7 @@ public class SettingsActivityFragment extends PreferenceFragment {
 
         ListPreference lsNumOfGuesses = new ListPreference(getActivity());
         lsNumOfGuesses.setKey(GUESSES);
-        lsNumOfGuesses.setTitle(getResources().getString(R.string.number_of_guesses_title));
+        lsNumOfGuesses.setTitle( getResources().getString(R.string.number_of_guesses_title));
         lsNumOfGuesses.setSummary(getResources().getString(R.string.number_of_guesses_description));
         lsNumOfGuesses.setDialogTitle(getResources().getString(R.string.number_of_guesses_dialog_title));
         lsNumOfGuesses.setEntries(getResources().getTextArray(R.array.number_of_guesses_list));
@@ -130,6 +131,7 @@ public class SettingsActivityFragment extends PreferenceFragment {
 
         return root;
     }
+    */
 
 }
 
