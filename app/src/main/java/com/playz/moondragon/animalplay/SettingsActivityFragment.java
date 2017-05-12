@@ -20,13 +20,6 @@ import java.util.Set;
  */
 public class SettingsActivityFragment extends PreferenceFragment {
 
-    /*public static final String GUESSES = "NumberOfGuesses";
-    public static final String ANIMALS_TYPES = "AnimalsType";
-    public static final String PLAY_BACKGROUND_COLOR = "PlayBackgroundColor";
-    public static final String PLAY_FONT = "PlayFont";
-    public static final String IMAGES_TYPES = "ImagesType";
-    public static final String RESET_ROUND = "ResetRound";*/
-
     private MainActivityFragment myAnimalQuizFragment;
 
     @Override

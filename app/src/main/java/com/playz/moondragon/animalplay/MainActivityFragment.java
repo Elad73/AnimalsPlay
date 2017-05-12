@@ -406,7 +406,7 @@ public class MainActivityFragment extends Fragment {
 
             case "BoyzRGrossNF.ttf":
                 modifiedFont = MainActivity.boyzRGrossNF;
-                fontSize = 28;
+                fontSize = 30;
                 break;
             case "Chubby Dotty.ttf":
                 modifiedFont = MainActivity.chubbyDotty;
@@ -419,7 +419,7 @@ public class MainActivityFragment extends Fragment {
             case "EmilysCandy-Regular.ttf":
             default:
                 modifiedFont = MainActivity.emilysCandyRegular;
-                fontSize = 22;
+                fontSize = 20;
                 break;
         }
 

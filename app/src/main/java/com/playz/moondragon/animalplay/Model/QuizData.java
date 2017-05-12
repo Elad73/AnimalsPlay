@@ -142,6 +142,7 @@ public class QuizData {
                         for (String assetInType : allAssetsInType) {
                             String assetType = assetInType.substring(assetInType.indexOf('.') + 1);
                             String assetName = assetInType.substring(assetInType.indexOf('-') + 1, assetInType.indexOf('_'));
+                            assetName =  assetName.replace('@', '\n');
                             String assetsPath = folder + '/' + assetInType;
                             Animal animal = isContainAnimalInList(lsAllAnimalsType, assetName);
                             if (animal == null) {
